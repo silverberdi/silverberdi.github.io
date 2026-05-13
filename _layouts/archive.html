@@ -1,0 +1,41 @@
+---
+layout: default
+---
+
+<!-- begin archive -->
+<div class="container">
+  <div class="row">
+    <div class="col col-12">
+      <div class="archive-page">
+        <div class="archive-page__head">
+          <h1 class="archive-page__title">Archive</h1>
+          <p class="archive-page__description">All posts organized by date</p>
+        </div>
+
+        {% assign posts_by_year = site.posts | group_by_exp:"post", "post.date | date: '%Y'" %}
+        {% for year_group in posts_by_year %}
+        <div class="archive-page__group">
+          <h2 class="archive-page__year">{{ year_group.name }} <sup>{{ year_group.items.size }} posts</sup></h2>
+          {% assign posts_by_month = year_group.items | group_by_exp:"post", "post.date | date: '%B'" %}
+          {% for month_group in posts_by_month %}
+          <div class="archive-page__collection">
+            <h3 class="archive-page__month">{{ month_group.name }} <sup>{{ month_group.items.size }}</sup></h3>
+            {% for post in month_group.items %}
+            <div class="archive-article">
+              <h4 class="archive-article__title">
+                <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+              </h4>
+              <div class="archive-article__meta">
+                <span class="archive-article__date">{{ post.date | date: "%b %d" | upcase }}</span>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end archive -->

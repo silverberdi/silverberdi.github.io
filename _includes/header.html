@@ -1,0 +1,71 @@
+<!-- begin header -->
+<header class="header">
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="header__inner">
+          <div class="logo">
+            <a class="logo__link" href="{{ "/" | relative_url }}">
+              {{ site.title }}
+            </a>
+          </div>
+
+          <nav class="main-nav">
+            <div class="main-nav__box">
+              <ul class="nav__list list-reset">
+                <li class="nav__item">
+                  <a href="{{ "/" | relative_url }}" class="nav__link">Home</a>
+                </li>
+                <li class="nav__item">
+                  <a href="{{ "/archive/" | relative_url }}" class="nav__link">Archive</a>
+                </li>
+                <li class="nav__item">
+                  <a href="{{ "/tags/" | relative_url }}" class="nav__link">Tags</a>
+                </li>
+                <li class="nav__item">
+                  <a href="{{ "/about/" | relative_url }}" class="nav__link">About</a>
+                </li>
+                <li class="nav__item">
+                  <a href="{{ "/contact/" | relative_url }}" class="nav__link">Contact</a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+
+          <div class="nav-button">
+            <div class="color-scheme-button">
+              <div class="toggle-theme">
+                <div class="toggle-moon" title="Enable dark mode" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4">
+                      <path d="M37 32.11C33.94 33.6 24 35.5 18.25 29.75 12.5 24 14.4 14.06 15.89 11 9.5 13.38 5 19.52 5 26.69 5 35.41 12.09 42.5 20.81 42.5 27.98 42.5 34.12 38 36.5 31.61 36.74 31.88 37 32.11 37 32.11Z"/>
+                    </g>
+                  </svg>
+                </div>
+                <div class="toggle-sun" title="Enable light mode" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4">
+                      <path stroke-linecap="round" d="m9.15 9.15l2.228 2.228M3 24h3.15m3 14.85l2.228-2.228M38.85 38.85l-2.228-2.228M45 24h-3.15m-3-14.85l-2.228 2.228M24 3v3.15"/>
+                      <path fill="currentColor" d="M24 36c6.627 0 12-5.373 12-12s-5.373-12-12-12s-12 5.373-12 12s5.373 12 12 12Z"/>
+                      <path stroke-linecap="round" d="M24 45v-3.15"/>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="search-button">
+              <svg class="search-button__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M221.09 64a157.09 157.09 0 10157.09 157.09A157.1 157.1 0 00221.09 64z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M338.29 338.29L448 448"/></svg>
+              <span class="search-button__text">Search posts...</span>
+            </div>
+          </div>
+
+          <div class="hamburger">
+            <div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- end header -->

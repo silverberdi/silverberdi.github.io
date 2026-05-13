@@ -1,0 +1,61 @@
+<!-- begin sidebar -->
+<aside class="sidebar">
+  <div class="widget">
+    <div class="widget-sidebar-head">
+      <h3 class="widget-sidebar-title">Recent Posts</h3>
+    </div>
+    {% for post in site.posts limit:4 %}
+    <div class="post-featured-content">
+      <div class="post-featured-meta">
+        <h4 class="post-featured-title">
+          <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+        </h4>
+        <span class="post-featured-date">{{ post.date | date_to_string | upcase }}</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="widget">
+    <div class="widget-sidebar-head">
+      <h3 class="widget-sidebar-title">Tags</h3>
+    </div>
+    <div class="tag-cloud">
+      {% for tag in site.tags limit:10 %}
+      <a href="{{ "/tags/" | relative_url }}#{{ tag[0] | slugify }}" class="tag-cloud__item" style="background-color: var(--primary-color);">{{ tag[0] }}</a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="widget">
+    <div class="widget-sidebar-head">
+      <h3 class="widget-sidebar-title">Social</h3>
+    </div>
+    <div class="widget-social">
+      <div class="widget-social__list">
+        {% if site.github_username %}
+        <div class="widget-social__item">
+          <a class="widget-social__link" href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener">
+            <i class="fa-brands fa-github"></i>
+          </a>
+        </div>
+        {% endif %}
+        {% if site.twitter_username %}
+        <div class="widget-social__item">
+          <a class="widget-social__link" href="https://twitter.com/{{ site.twitter_username }}" target="_blank" rel="noopener">
+            <i class="fa-brands fa-x-twitter"></i>
+          </a>
+        </div>
+        {% endif %}
+        {% if site.linkedin_username %}
+        <div class="widget-social__item">
+          <a class="widget-social__link" href="https://linkedin.com/in/{{ site.linkedin_username }}" target="_blank" rel="noopener">
+            <i class="fa-brands fa-linkedin-in"></i>
+          </a>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</aside>
+<!-- end sidebar -->

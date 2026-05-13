@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://silverberdi.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://silverberdi.github.io/" rel="alternate" type="text/html" /><updated>2026-05-13T10:56:51-05:00</updated><id>https://silverberdi.github.io/feed.xml</id><title type="html">Silverberdi’s Blog</title><subtitle>Building AI-assisted development tools, one stage at a time</subtitle><entry><title type="html">From Idea to Director: How Dairector Was Born</title><link href="https://silverberdi.github.io/2026/05/12/de-la-idea-al-director/" rel="alternate" type="text/html" title="From Idea to Director: How Dairector Was Born" /><published>2026-05-12T05:10:00-05:00</published><updated>2026-05-12T05:10:00-05:00</updated><id>https://silverberdi.github.io/2026/05/12/de-la-idea-al-director</id><content type="html" xml:base="https://silverberdi.github.io/2026/05/12/de-la-idea-al-director/">&lt;h3 id=&quot;chapter-1-the-false-start&quot;&gt;Chapter 1: The False Start&lt;/h3&gt;
+
+&lt;p&gt;It started with a simple frustration.&lt;/p&gt;
+
+&lt;p&gt;I was using Cursor, Copilot, all the usual suspects. And they were great at one thing: generating code snippets. But every time I tried to do something real — build a feature end-to-end, refactor a module, add authentication to an existing system — I hit the same wall.&lt;/p&gt;
+
+&lt;p&gt;The AI didn’t know the context. It didn’t understand the architecture. It would generate beautiful code that solved the wrong problem.&lt;/p&gt;
+
+&lt;p&gt;So I thought: what if I could build a tool that forces the AI to think like a senior developer? To start with the “why” before the “how”? To document decisions, analyze impact, and only then write code?&lt;/p&gt;
+
+&lt;p&gt;That was the original vision. Naive, ambitious, and completely wrong about how hard this would be.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-first-architecture&quot;&gt;The First Architecture&lt;/h3&gt;
+
+&lt;p&gt;The first version of Dairector was a single TypeScript file. About 900 lines. It did everything:&lt;/p&gt;
+
+&lt;div class=&quot;language-typescript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// The monolithic approach (v0.1)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;async&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;runPipeline&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;idea&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;design&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;callLLM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;`Design architecture for: &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;idea&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;backlog&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;callLLM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;`Generate features for: &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;design&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;handoff&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;callLLM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;`Create spec for: &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;backlog&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;code&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;callLLM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;`Write code for: &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;handoff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;tests&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;callLLM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;`Write tests for: &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;code&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;design&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;backlog&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;handoff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;code&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;tests&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;It worked. Sort of. The output was… interesting. The AI would generate coherent architectures, write reasonable code, even create tests. But there was no feedback loop. No way to validate. No way to say “that’s not what I meant.”&lt;/p&gt;
+
+&lt;p&gt;And the code was a nightmare. Every change required touching the entire file. Adding a new stage meant rewriting the pipeline. Error handling was an afterthought.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-pivot&quot;&gt;The Pivot&lt;/h3&gt;
+
+&lt;p&gt;After about two months, I had a working prototype and a growing sense of dread. The prototype worked, but it wasn’t extensible. It wasn’t testable. It wasn’t something I could confidently show to other developers.&lt;/p&gt;
+
+&lt;p&gt;So I made the hardest decision: I deleted almost everything and started over.&lt;/p&gt;
+
+&lt;p&gt;The new architecture had one rule: &lt;strong&gt;every stage is independent&lt;/strong&gt;. Each stage has its own:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Prompt template (loaded from &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.md&lt;/code&gt; files, not hardcoded)&lt;/li&gt;
+  &lt;li&gt;Model configuration (different LLMs for different tasks)&lt;/li&gt;
+  &lt;li&gt;State management (immutable, with clear transitions)&lt;/li&gt;
+  &lt;li&gt;Error handling (graceful degradation, not crash-and-burn)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-typescript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// The modular approach (v0.2)&lt;/span&gt;
+&lt;span class=&quot;kr&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Stage&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;prompt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;PromptTemplate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nl&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ModelConfig&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;input&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;StageInput&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Promise&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;StageResult&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;validate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;output&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;StageOutput&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ValidationResult&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;This was the turning point. The code became cleaner, yes. But more importantly, the system started to feel like a real product. Something that could grow.&lt;/p&gt;
+
+&lt;h3 id=&quot;what-i-learned&quot;&gt;What I Learned&lt;/h3&gt;
+
+&lt;p&gt;The biggest lesson from those early months: &lt;strong&gt;AI tools fail when they pretend to know everything&lt;/strong&gt;. The best AI-assisted development tool isn’t the one that generates the most code — it’s the one that asks the right questions at the right time.&lt;/p&gt;
+
+&lt;p&gt;Dairector’s pipeline isn’t just a technical architecture. It’s a philosophy: software development is a conversation. Between you and the code. Between intent and implementation. Between what you want and what the system can do.&lt;/p&gt;
+
+&lt;p&gt;The pipeline forces that conversation. IDEA asks “what are we building?” ANALYZE asks “how should we build it?” SLICE asks “what’s the smallest piece we can build first?” HANDOFF documents the plan. EXECUTE writes the code. VALIDATE checks the work.&lt;/p&gt;
+
+&lt;p&gt;Each stage is a chance to course-correct. To say “no, that’s not what I meant.” To refine the idea before it becomes a bug.&lt;/p&gt;
+
+&lt;h3 id=&quot;whats-next&quot;&gt;What’s Next&lt;/h3&gt;
+
+&lt;p&gt;This is post 1 of 20. Over the next few weeks, I’ll share:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;The architecture decisions that shaped the project&lt;/li&gt;
+  &lt;li&gt;The SOLID refactoring that cut code by 80%&lt;/li&gt;
+  &lt;li&gt;The hybrid pipeline that combines LLMs with deterministic execution&lt;/li&gt;
+  &lt;li&gt;The testing strategies that caught more bugs than the AI ever wrote&lt;/li&gt;
+  &lt;li&gt;The failures, the pivots, and the moments I almost gave up&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If you’re building AI-assisted tools, or just curious about what happens when you let an LLM near production code, follow along. This is going to be a wild ride.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;em&gt;Next post: The Pipeline Architecture — Why 6 Stages and Not 3 or 10&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="ai" /><category term="development" /><category term="ai-assisted-development" /><category term="llm" /><category term="software-architecture" /><category term="pipeline" /><summary type="html">Chapter 1: The False Start</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://silverberdi.github.io/assets/images/from-idea-to-dairector.png" /><media:content medium="image" url="https://silverberdi.github.io/assets/images/from-idea-to-dairector.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>

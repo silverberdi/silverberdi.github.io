@@ -1,0 +1,14 @@
+---
+layout: null
+---
+[
+  {% for post in site.posts %}
+  {
+    "title": "{{ post.title | xml_escape }}",
+    "url": "{{ post.url | relative_url | xml_escape }}",
+    "tags": "{{ post.tags | join: ', ' | xml_escape }}",
+    "date": "{{ post.date | date_to_string | xml_escape }}",
+    "description": "{{ post.excerpt | strip_html | strip_newlines | truncate: 200 | xml_escape }}"
+  }{% unless forloop.last %},{% endunless %}
+  {% endfor %}
+]

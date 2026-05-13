@@ -1,0 +1,82 @@
+---
+layout: default
+---
+
+<!-- begin post -->
+<div class="container">
+  <div class="row">
+    <div class="col col-12">
+      <article class="post">
+        <div class="post-head">
+          <div class="post-tags">
+            {% if page.tags %}
+              {% for tag in page.tags %}
+              <span class="post-tag" style="background-color: var(--primary-color);">{{ tag }}</span>
+              {% endfor %}
+            {% endif %}
+          </div>
+          <h1 class="post-title">{{ page.title }}</h1>
+          <div class="post-meta">
+            <div class="post-meta__content">
+              <span class="post-meta__author">{{ page.author | default: site.author }}</span>
+              <div class="post-meta__bottom">
+                <span class="post-meta__date">{{ page.date | date_to_string | upcase }}</span>
+                {% if page.content %}
+                <span class="post-meta__reading-time"> · {{ page.content | number_of_words | divided_by: 200 | plus: 1 }} min read</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {% if page.image %}
+        <div class="post-image">
+          <img src="{{ page.image | relative_url }}" alt="{{ page.title }}" loading="lazy">
+        </div>
+        {% endif %}
+
+        <div class="post__content">
+          {{ content }}
+        </div>
+
+        <!-- Share -->
+        <div class="share">
+          <h3 class="share__title">Share this post</h3>
+          <div class="share__list">
+            <a href="https://twitter.com/intent/tweet?text={{ page.title | uri_escape }}&url={{ page.url | absolute_url }}" class="share__link" target="_blank" rel="noopener">
+              <i class="fa-brands fa-x-twitter"></i>
+            </a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ page.url | absolute_url }}" class="share__link" target="_blank" rel="noopener">
+              <i class="fa-brands fa-linkedin-in"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Post Navigation -->
+        <div class="post__navigation">
+          {% if page.previous.url %}
+          <div class="post__prev">
+            <div class="prev__box">
+              <span class="post__nav__prev">Previous post</span>
+              <h4 class="post__nav__title">
+                <a href="{{ page.previous.url | relative_url }}">{{ page.previous.title }}</a>
+              </h4>
+            </div>
+          </div>
+          {% endif %}
+          {% if page.next.url %}
+          <div class="post__next">
+            <div class="next__box">
+              <span class="post__nav__next">Next post</span>
+              <h4 class="post__nav__title">
+                <a href="{{ page.next.url | relative_url }}">{{ page.next.title }}</a>
+              </h4>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </article>
+    </div>
+  </div>
+</div>
+<!-- end post -->

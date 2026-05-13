@@ -1,0 +1,77 @@
+<!-- begin footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="footer__inner">
+          <div class="row">
+            <div class="col col-4 col-d-12">
+              <div class="footer__info">
+                <h3 class="footer__info__title">{{ site.title }}</h3>
+                <p class="footer__info__description">{{ site.description }}</p>
+                <div class="footer__social">
+                  <div class="footer__social__list">
+                    {% if site.github_username %}
+                    <div class="footer__social__item">
+                      <a class="footer__social__link" href="https://github.com/{{ site.github_username }}" target="_blank" rel="noopener">
+                        <i class="fa-brands fa-github"></i>
+                      </a>
+                    </div>
+                    {% endif %}
+                    {% if site.twitter_username %}
+                    <div class="footer__social__item">
+                      <a class="footer__social__link" href="https://twitter.com/{{ site.twitter_username }}" target="_blank" rel="noopener">
+                        <i class="fa-brands fa-x-twitter"></i>
+                      </a>
+                    </div>
+                    {% endif %}
+                    {% if site.linkedin_username %}
+                    <div class="footer__social__item">
+                      <a class="footer__social__link" href="https://linkedin.com/in/{{ site.linkedin_username }}" target="_blank" rel="noopener">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                      </a>
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col col-4 col-d-12">
+              <div class="footer__recent-posts">
+                <h3 class="footer__title">Recent Posts</h3>
+                {% for post in site.posts limit:3 %}
+                <div class="footer__recent-content">
+                  <div class="footer__recent-meta">
+                    <h4 class="footer__recent-title">
+                      <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+                    </h4>
+                    <span class="footer__recent-date">{{ post.date | date_to_string | upcase }}</span>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class="col col-4 col-d-12">
+              <h3 class="footer__title">Pages</h3>
+              <div class="footer-nav__list">
+                <a class="footer-nav__link" href="{{ "/about/" | relative_url }}">About</a>
+                <a class="footer-nav__link" href="{{ "/contact/" | relative_url }}">Contact</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="copyright">{{ site.time | date: '%Y' }} &copy; <a href="{{ "/" | relative_url }}">{{ site.title }}</a>.</div>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- end footer -->

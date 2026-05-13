@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Checklist de Implementación del Tema Coderon – Silverberdi's Blog</title>
+  <meta name="description" content="Building AI-assisted development tools, one stage at a time">
+
+  <link rel="canonical" href="https://silverberdi.github.io/ToDo/theme/">
+  <link rel="alternate" type="application/rss+xml" title="Silverberdi's Blog" href="/feed.xml">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Checklist de Implementación del Tema Coderon">
+  <meta name="twitter:description" content="Building AI-assisted development tools, one stage at a time">
+
+  <!-- Facebook OpenGraph -->
+  <meta property="og:title" content="Checklist de Implementación del Tema Coderon">
+  <meta property="og:description" content="Building AI-assisted development tools, one stage at a time">
+  <meta property="og:url" content="https://silverberdi.github.io/ToDo/theme/">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+
+  <!-- Dark mode script (runs before render) -->
+  <script>
+    const defaultTheme = "dark";
+    const isToggleEnabled = true;
+    const userTheme = localStorage.getItem("theme");
+
+    function setTheme(mode) {
+      if (mode === "dark") {
+        document.documentElement.setAttribute("dark", "");
+        document.documentElement.classList.add("dark-mode");
+      } else if (mode === "light") {
+        document.documentElement.removeAttribute("dark");
+        document.documentElement.classList.remove("dark-mode");
+      }
+    }
+
+    if (isToggleEnabled) {
+      if (userTheme) {
+        setTheme(userTheme);
+      } else {
+        setTheme(defaultTheme);
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body>
+  <div class="global-wrap">
+    <!-- begin header -->
+<header class="header">
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="header__inner">
+          <div class="logo">
+            <a class="logo__link" href="/">
+              Silverberdi's Blog
+            </a>
+          </div>
+
+          <nav class="main-nav">
+            <div class="main-nav__box">
+              <ul class="nav__list list-reset">
+                <li class="nav__item">
+                  <a href="/" class="nav__link">Home</a>
+                </li>
+                <li class="nav__item">
+                  <a href="/archive/" class="nav__link">Archive</a>
+                </li>
+                <li class="nav__item">
+                  <a href="/tags/" class="nav__link">Tags</a>
+                </li>
+                <li class="nav__item">
+                  <a href="/about/" class="nav__link">About</a>
+                </li>
+                <li class="nav__item">
+                  <a href="/contact/" class="nav__link">Contact</a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+
+          <div class="nav-button">
+            <div class="color-scheme-button">
+              <div class="toggle-theme">
+                <div class="toggle-moon" title="Enable dark mode" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4">
+                      <path d="M37 32.11C33.94 33.6 24 35.5 18.25 29.75 12.5 24 14.4 14.06 15.89 11 9.5 13.38 5 19.52 5 26.69 5 35.41 12.09 42.5 20.81 42.5 27.98 42.5 34.12 38 36.5 31.61 36.74 31.88 37 32.11 37 32.11Z"/>
+                    </g>
+                  </svg>
+                </div>
+                <div class="toggle-sun" title="Enable light mode" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4">
+                      <path stroke-linecap="round" d="m9.15 9.15l2.228 2.228M3 24h3.15m3 14.85l2.228-2.228M38.85 38.85l-2.228-2.228M45 24h-3.15m-3-14.85l-2.228 2.228M24 3v3.15"/>
+                      <path fill="currentColor" d="M24 36c6.627 0 12-5.373 12-12s-5.373-12-12-12s-12 5.373-12 12s5.373 12 12 12Z"/>
+                      <path stroke-linecap="round" d="M24 45v-3.15"/>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="search-button">
+              <svg class="search-button__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M221.09 64a157.09 157.09 0 10157.09 157.09A157.1 157.1 0 00221.09 64z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M338.29 338.29L448 448"/></svg>
+              <span class="search-button__text">Search posts...</span>
+            </div>
+          </div>
+
+          <div class="hamburger">
+            <div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- end header -->
+    <!-- begin search -->
+<div class="search">
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="search__box">
+          <div class="search__group">
+            <i class="search__close fa-solid fa-xmark"></i>
+            <label for="js-search-input" class="screen-reader-text">Search for Blog</label>
+            <input type="text" id="js-search-input" class="search__text" autocomplete="off"
+              placeholder="Type to search...">
+          </div>
+          <div class="search-results-list view-list" id="js-results-container"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="search__overlay"></div>
+</div>
+<!-- end search -->
+
+    <main class="content" aria-label="Content">
+      <!-- begin page -->
+<div class="container">
+  <div class="row">
+    <div class="col col-12">
+      <div class="page-head">
+        <h1 class="page-title">Checklist de Implementación del Tema Coderon</h1>
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col col-12">
+      <div class="page">
+        <h1 id="checklist-de-implementación-del-tema-coderon">Checklist de Implementación del Tema Coderon</h1>
+
+<h2 id="1-configuración-base">1. Configuración Base</h2>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Cambiar <code class="language-plaintext highlighter-rouge">theme: minima</code> por tema personalizado en <code class="language-plaintext highlighter-rouge">_config.yml</code></li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Agregar Google Fonts (Poppins + Roboto Mono)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Agregar Font Awesome 6.5.1 (en CSS existente)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Configurar SEO (Twitter Cards, OpenGraph)</li>
+</ul>
+
+<h2 id="2-layouts-carpeta-_layouts">2. Layouts (carpeta <code class="language-plaintext highlighter-rouge">_layouts/</code>)</h2>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Crear <code class="language-plaintext highlighter-rouge">default.html</code> - Layout base con header/footer</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Crear <code class="language-plaintext highlighter-rouge">home.html</code> - Hero section + grid de posts</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Crear <code class="language-plaintext highlighter-rouge">post.html</code> - Layout para artículos individuales</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Crear <code class="language-plaintext highlighter-rouge">page.html</code> - Layout para páginas estáticas</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Crear <code class="language-plaintext highlighter-rouge">tags.html</code> - Página de tags</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Crear <code class="language-plaintext highlighter-rouge">archive.html</code> - Archivo de posts</li>
+</ul>
+
+<h2 id="3-includes-carpeta-_includes">3. Includes (carpeta <code class="language-plaintext highlighter-rouge">_includes/</code>)</h2>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Crear <code class="language-plaintext highlighter-rouge">header.html</code> - Header con navegación</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Crear <code class="language-plaintext highlighter-rouge">footer.html</code> - Footer completo</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Crear <code class="language-plaintext highlighter-rouge">hero.html</code> - Hero section (incluido en home.html)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Crear <code class="language-plaintext highlighter-rouge">search.html</code> - Buscador de posts</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Crear <code class="language-plaintext highlighter-rouge">sidebar.html</code> - Sidebar con widgets</li>
+</ul>
+
+<h2 id="4-header">4. Header</h2>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Logo con texto</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Menú de navegación (con enlaces a Archive, Tags, About, Contact)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Toggle dark/light mode (con localStorage)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Buscador de posts (con overlay y fetch de search.json)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Menú hamburguesa responsive</li>
+</ul>
+
+<h2 id="5-hero-section">5. Hero Section</h2>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Avatar circular</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Título grande con Poppins</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Subtítulo</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Descripción</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Botón con gradiente</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Imagen destacada</li>
+</ul>
+
+<h2 id="6-grid-de-posts">6. Grid de Posts</h2>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Cards con imágenes</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Tags con colores</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Fechas en formato uppercase</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Vista lista/grid toggle</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Efectos hover con scale (en CSS existente)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Lazy loading de imágenes</li>
+</ul>
+
+<h2 id="7-footer">7. Footer</h2>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Información del blog</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Redes sociales con iconos</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Posts recientes</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Navegación de páginas</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Copyright</li>
+</ul>
+
+<h2 id="8-css">8. CSS</h2>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Sistema de grid responsive (12 columnas) - en CSS existente</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Modo oscuro completo con variables CSS (en CSS existente)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Animaciones y efectos hover (en CSS existente)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Estilos para: hero, articles, tags, search, pagination (en CSS existente)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Responsive design (breakpoints: 1400px, 1024px, 768px, 576px) (en CSS existente)</li>
+</ul>
+
+<h2 id="9-javascript">9. JavaScript</h2>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Reframe.js - Videos responsive (en scripts.js existente)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />SimpleJekyllSearch - Búsqueda en vivo (conectado con search.json)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />LazyLoad - Carga diferida de imágenes (en scripts.js existente)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Splide - Carrusel de logos (en scripts.js existente)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />common.js - Toggle dark mode, menú, scroll to top, búsqueda, view toggle</li>
+</ul>
+
+<h2 id="10-páginas-adicionales">10. Páginas Adicionales</h2>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />about.md - Página About</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />contact.md - Página de contacto</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />elements.md - Página de demostración de estilos</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />tags.md - Página de tags</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />archive.md - Página de archivo</li>
+</ul>
+
+<h2 id="11-seo">11. SEO</h2>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Twitter Cards</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Facebook OpenGraph</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />RSS feed link</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Meta description</li>
+</ul>
+
+<h2 id="12-extras">12. Extras</h2>
+<ul class="task-list">
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Botón “scroll to top”</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Overlay para imágenes (zoom)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Copy button en bloques de código</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Tabla de contenidos en posts</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" checked="checked" />Navegación entre posts (prev/next)</li>
+  <li class="task-list-item"><input type="checkbox" class="task-list-item-checkbox" disabled="disabled" />Posts relacionados</li>
+</ul>
+
+      </div>
+    </div>
+  </div>
+</div>
+<!-- end page -->
+    </main>
+
+    <!-- begin footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="footer__inner">
+          <div class="row">
+            <div class="col col-4 col-d-12">
+              <div class="footer__info">
+                <h3 class="footer__info__title">Silverberdi's Blog</h3>
+                <p class="footer__info__description">Building AI-assisted development tools, one stage at a time</p>
+                <div class="footer__social">
+                  <div class="footer__social__list">
+                    
+                    <div class="footer__social__item">
+                      <a class="footer__social__link" href="https://github.com/silverberdi" target="_blank" rel="noopener">
+                        <i class="fa-brands fa-github"></i>
+                      </a>
+                    </div>
+                    
+                    
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col col-4 col-d-12">
+              <div class="footer__recent-posts">
+                <h3 class="footer__title">Recent Posts</h3>
+                
+                <div class="footer__recent-content">
+                  <div class="footer__recent-meta">
+                    <h4 class="footer__recent-title">
+                      <a href="/2026/05/12/de-la-idea-al-director/">From Idea to Director: How Dairector Was Born</a>
+                    </h4>
+                    <span class="footer__recent-date">12 MAY 2026</span>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+
+            <div class="col col-4 col-d-12">
+              <h3 class="footer__title">Pages</h3>
+              <div class="footer-nav__list">
+                <a class="footer-nav__link" href="/about/">About</a>
+                <a class="footer-nav__link" href="/contact/">Contact</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="copyright">2026 &copy; <a href="/">Silverberdi's Blog</a>.</div>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- end footer -->
+  </div>
+
+  <div class="top" title="Top"><i class="fa-solid fa-arrow-up"></i></div>
+
+  <script src="/assets/js/scripts.js"></script>
+  <script src="/assets/js/common.js"></script>
+</body>
+</html>

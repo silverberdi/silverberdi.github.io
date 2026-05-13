@@ -3,7 +3,8 @@ description: Building AI-assisted development tools, one stage at a time
 url: "https://silverberdi.github.io"
 baseurl: ""
 markdown: kramdown
-theme: minima
+# Disable default theme to use custom layouts
+# theme: minima
 plugins:
   - jekyll-feed
   - jekyll-seo-tag
@@ -11,3 +12,34 @@ plugins:
 # Build settings
 permalink: /:year/:month/:day/:title/
 show_excerpts: true
+
+# Navigation
+header_pages:
+  - about.md
+  - contact.md
+
+# Social links
+github_username: silverberdi
+twitter_username: 
+linkedin_username: 
+
+# Google Fonts
+google_fonts:
+  - name: "Poppins"
+    weights: "100;200;300;400;500;600;700;800;900"
+  - name: "Roboto Mono"
+    weights: "100..700"
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: posts
+    values:
+      layout: post
+      author: Silverberdi
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: page

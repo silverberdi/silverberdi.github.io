@@ -5,6 +5,7 @@ date: 2026-05-12 05:10:00 -0500
 categories: [dairector, ai, development]
 tags: [ai-assisted-development, llm, software-architecture, pipeline]
 description: "The story of how a frustration with generative AI tools led to building Dairector, an AI-assisted development pipeline. From the monolithic prototype to the modular architecture, and the lessons learned along the way."
+image: /assets/images/from-idea-to-dairector.png
 ---
 
 ### Chapter 1: The False Start
