@@ -42,6 +42,13 @@
                 <h3 class="footer__title">Recent Posts</h3>
                 {% for post in site.posts limit:3 %}
                 <div class="footer__recent-content">
+                  <a href="{{ post.url | relative_url }}" class="footer__recent-image">
+                    {% if post.image %}
+                    <img src="{{ post.image | relative_url }}" alt="{{ post.title }}" loading="lazy">
+                    {% else %}
+                    <img src="{{ "/assets/images/post-default.svg" | relative_url }}" alt="{{ post.title }}" loading="lazy">
+                    {% endif %}
+                  </a>
                   <div class="footer__recent-meta">
                     <h4 class="footer__recent-title">
                       <a href="{{ post.url | relative_url }}">{{ post.title }}</a>

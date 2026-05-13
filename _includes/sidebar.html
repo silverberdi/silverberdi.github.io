@@ -22,7 +22,9 @@
     </div>
     <div class="tag-cloud">
       {% for tag in site.tags limit:10 %}
-      <a href="{{ "/tags/" | relative_url }}#{{ tag[0] | slugify }}" class="tag-cloud__item" style="background-color: var(--primary-color);">{{ tag[0] }}</a>
+      {% assign tag_name = tag[0] | downcase %}
+      {% assign tag_color = site.data.tags[tag_name] | default: "var(--primary-color)" %}
+      <a href="{{ "/tags/" | relative_url }}#{{ tag[0] | slugify }}" class="tag-cloud__item" style="background-color: {{ tag_color }};">{{ tag[0] }}</a>
       {% endfor %}
     </div>
   </div>

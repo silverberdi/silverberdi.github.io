@@ -11,7 +11,8 @@ layout: default
           <div class="post-tags">
             {% if page.tags %}
               {% for tag in page.tags %}
-              <span class="post-tag" style="background-color: var(--primary-color);">{{ tag }}</span>
+              {% assign tag_color = site.data.tags[tag] | default: "var(--primary-color)" %}
+              <span class="post-tag" style="background-color: {{ tag_color }};">{{ tag }}</span>
               {% endfor %}
             {% endif %}
           </div>

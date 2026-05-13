@@ -20,7 +20,9 @@ layout: default
       <div class="tags__inner" id="tags">
         <div class="tag-cloud">
           {% for tag in site.tags %}
-          <a href="#{{ tag[0] | slugify }}" class="tag-cloud__item" style="background-color: var(--primary-color);">{{ tag[0] }}</a>
+          {% assign tag_name = tag[0] | downcase %}
+          {% assign tag_color = site.data.tags[tag_name] | default: "var(--primary-color)" %}
+          <a href="#{{ tag[0] | slugify }}" class="tag-cloud__item" style="background-color: {{ tag_color }};">{{ tag[0] }}</a>
           {% endfor %}
         </div>
 
@@ -34,7 +36,11 @@ layout: default
               <div class="article__inner">
                 <div class="article__head">
                   <a href="{{ post.url | relative_url }}" class="article__image">
+                    {% if post.image %}
+                    <img src="{{ post.image | relative_url }}" alt="{{ post.title }}" loading="lazy">
+                    {% else %}
                     <img src="{{ "/assets/images/post-default.svg" | relative_url }}" alt="{{ post.title }}" loading="lazy">
+                    {% endif %}
                   </a>
                 </div>
                 <div class="article__content">
