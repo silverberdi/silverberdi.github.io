@@ -1,10 +1,10 @@
 ---
 layout: post
-title: "De la idea al director: Cómo nació Dairector"
+title: "From Idea to Director: How Dairector Was Born"
 date: 2026-05-12 05:10:00 -0500
 categories: [dairector, ai, development]
 tags: [ai-assisted-development, llm, software-architecture, pipeline]
-description: "La historia de cómo una frustración con las herramientas de IA generativa me llevó a construir Dairector, un pipeline de desarrollo asistido por IA. Desde el prototipo monolítico hasta la arquitectura modular, y las lecciones aprendidas en el camino."
+description: "The story of how a frustration with generative AI tools led to building Dairector, an AI-assisted development pipeline. From the monolithic prototype to the modular architecture, and the lessons learned along the way."
 ---
 
 ### Chapter 1: The False Start
