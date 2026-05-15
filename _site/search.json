@@ -1,6 +1,14 @@
 [
   
   {
+    "title": "The Pipeline Architecture — Why 6 Stages and Not 3 or 10",
+    "url": "/2026/05/15/the-pipeline-architecture/",
+    "tags": "ai-assisted-development, llm, software-architecture, pipeline, dairector",
+    "date": "15 May 2026",
+    "description": "The Problem with Linear Pipelines"
+  },
+  
+  {
     "title": "From Idea to Director: How Dairector Was Born",
     "url": "/2026/05/12/de-la-idea-al-director/",
     "tags": "ai-assisted-development, llm, software-architecture, pipeline",
