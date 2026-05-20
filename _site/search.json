@@ -1,6 +1,14 @@
 [
   
   {
+    "title": "The SOLID Refactoring — How I Cut 80% of My Code",
+    "url": "/2026/05/20/the-solid-refactoring/",
+    "tags": "software-architecture, refactoring, solid, typescript, dairector",
+    "date": "20 May 2026",
+    "description": "The Spaghetti Problem"
+  },
+  
+  {
     "title": "The Pipeline Architecture — Why 6 Stages and Not 3 or 10",
     "url": "/2026/05/15/the-pipeline-architecture/",
     "tags": "ai-assisted-development, llm, software-architecture, pipeline, dairector",
