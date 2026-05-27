@@ -1,6 +1,14 @@
 [
   
   {
+    "title": "The All-LLM Trap",
+    "url": "/2026/05/27/the-all-llm-trap/",
+    "tags": "ai, llm, pipeline, architecture, engineering",
+    "date": "27 May 2026",
+    "description": "In early 2025, there was a trend: build everything with LLMs. Want to write code? LLM. Want to run tests? LLM. Want to deploy? LLM."
+  },
+  
+  {
     "title": "The SOLID Refactoring — How I Cut 80% of My Code",
     "url": "/2026/05/20/the-solid-refactoring/",
     "tags": "software-architecture, refactoring, solid, typescript, dairector",

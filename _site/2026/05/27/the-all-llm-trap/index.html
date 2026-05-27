@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>The All-LLM Trap</title>
+  <meta name="description" content="In early 2025, there was a trend: build everything with LLMs. Want to write code? LLM. Want to run tests? LLM. Want to deploy? LLM.">
+
+  <link rel="canonical" href="http://localhost:4000/2026/05/27/the-all-llm-trap/">
+  <link rel="alternate" type="application/rss+xml" title="It's not just a problem of syntax..." href="/feed.xml">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="The All-LLM Trap">
+  <meta name="twitter:description" content="In early 2025, there was a trend: build everything with LLMs. Want to write code? LLM. Want to run tests? LLM. Want to deploy? LLM.">
+
+  <!-- Facebook OpenGraph -->
+  <meta property="og:title" content="The All-LLM Trap">
+  <meta property="og:description" content="In early 2025, there was a trend: build everything with LLMs. Want to write code? LLM. Want to run tests? LLM. Want to deploy? LLM.">
+  <meta property="og:url" content="http://localhost:4000/2026/05/27/the-all-llm-trap/">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+
+  <!-- Dark mode script (runs before render) -->
+  <script>
+    const defaultTheme = "dark";
+    const isToggleEnabled = true;
+    const userTheme = localStorage.getItem("theme");
+
+    function setTheme(mode) {
+      if (mode === "dark") {
+        document.documentElement.setAttribute("dark", "");
+        document.documentElement.classList.add("dark-mode");
+      } else if (mode === "light") {
+        document.documentElement.removeAttribute("dark");
+        document.documentElement.classList.remove("dark-mode");
+      }
+    }
+
+    if (isToggleEnabled) {
+      if (userTheme) {
+        setTheme(userTheme);
+      } else {
+        setTheme(defaultTheme);
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body>
+  <div class="global-wrap">
+    <!-- begin header -->
+<header class="header">
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="header__inner">
+          <div class="logo">
+            <a class="logo__link" href="/">
+              It's not just a problem of syntax...
+            </a>
+          </div>
+
+          <nav class="main-nav">
+            <div class="main-nav__box">
+              <ul class="nav__list list-reset">
+                <li class="nav__item">
+                  <a href="/" class="nav__link">Home</a>
+                </li>
+                <li class="nav__item">
+                  <a href="/archive/" class="nav__link">Archive</a>
+                </li>
+                <li class="nav__item">
+                  <a href="/tags/" class="nav__link">Tags</a>
+                </li>
+                <li class="nav__item">
+                  <a href="/about/" class="nav__link">About</a>
+                </li>
+                <li class="nav__item">
+                  <a href="/contact/" class="nav__link">Contact</a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+
+          <div class="nav-button">
+            <div class="color-scheme-button">
+              <div class="toggle-theme">
+                <div class="toggle-moon" title="Enable dark mode" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4">
+                      <path d="M37 32.11C33.94 33.6 24 35.5 18.25 29.75 12.5 24 14.4 14.06 15.89 11 9.5 13.38 5 19.52 5 26.69 5 35.41 12.09 42.5 20.81 42.5 27.98 42.5 34.12 38 36.5 31.61 36.74 31.88 37 32.11 37 32.11Z"/>
+                    </g>
+                  </svg>
+                </div>
+                <div class="toggle-sun" title="Enable light mode" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4">
+                      <path stroke-linecap="round" d="m9.15 9.15l2.228 2.228M3 24h3.15m3 14.85l2.228-2.228M38.85 38.85l-2.228-2.228M45 24h-3.15m-3-14.85l-2.228 2.228M24 3v3.15"/>
+                      <path fill="currentColor" d="M24 36c6.627 0 12-5.373 12-12s-5.373-12-12-12s-12 5.373-12 12s5.373 12 12 12Z"/>
+                      <path stroke-linecap="round" d="M24 45v-3.15"/>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="search-button">
+              <svg class="search-button__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M221.09 64a157.09 157.09 0 10157.09 157.09A157.1 157.1 0 00221.09 64z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M338.29 338.29L448 448"/></svg>
+              <span class="search-button__text">Search posts...</span>
+            </div>
+          </div>
+
+          <div class="hamburger">
+            <div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- end header -->
+    <!-- begin search -->
+<div class="search">
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="search__box">
+          <div class="search__group">
+            <i class="search__close fa-solid fa-xmark"></i>
+            <label for="js-search-input" class="screen-reader-text">Search for Blog</label>
+            <input type="text" id="js-search-input" class="search__text" autocomplete="off"
+              placeholder="Type to search...">
+          </div>
+          <div class="search-results-list view-list" id="js-results-container"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="search__overlay"></div>
+</div>
+<!-- end search -->
+
+    <main class="content" aria-label="Content">
+      <!-- begin post -->
+<div class="container">
+  <div class="row">
+    <div class="col col-12">
+      <article class="post">
+        <div class="post-head">
+          <div class="post-tags">
+            
+              
+              
+              <span class="post-tag" style="background-color: #9B59B6;">ai</span>
+              
+              
+              <span class="post-tag" style="background-color: #2ECC71;">llm</span>
+              
+              
+              <span class="post-tag" style="background-color: #E74C3C;">pipeline</span>
+              
+              
+              <span class="post-tag" style="background-color: var(--primary-color);">architecture</span>
+              
+              
+              <span class="post-tag" style="background-color: var(--primary-color);">engineering</span>
+              
+            
+          </div>
+          <h1 class="post-title">The All-LLM Trap</h1>
+          <div class="post-meta">
+            <div class="post-meta__content">
+              <span class="post-meta__author">Silverberdi</span>
+              <div class="post-meta__bottom">
+                <span class="post-meta__date">27 MAY 2026</span>
+                
+                <span class="post-meta__reading-time"> · 6 min read</span>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="post-image">
+          <img src="/assets/images/the-llm-trap.png" alt="The All-LLM Trap" loading="lazy">
+        </div>
+        
+
+        <div class="post__content">
+          <p>In early 2025, there was a trend: build everything with LLMs. Want to write code? LLM. Want to run tests? LLM. Want to deploy? LLM.</p>
+
+<p>This is seductive because it’s simple. One API call can do anything. But “can do anything” also means “can fail in unpredictable ways.”</p>
+
+<p>I fell into this trap. My first pipeline was 100% LLM-driven:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// The naive approach: everything goes through the LLM</span>
+<span class="k">async</span> <span class="kd">function</span> <span class="nx">executeStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">:</span> <span class="kr">string</span><span class="p">,</span> <span class="nx">input</span><span class="p">:</span> <span class="kr">any</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">prompt</span> <span class="o">=</span> <span class="nx">buildPrompt</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">input</span><span class="p">);</span>
+  <span class="kd">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">llm</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">prompt</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">parseResponse</span><span class="p">(</span><span class="nx">response</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The problem? The LLM would sometimes:</p>
+<ul>
+  <li>Return malformed JSON</li>
+  <li>Forget to include required fields</li>
+  <li>Hallucinate file paths that don’t exist</li>
+  <li>Generate code with syntax errors</li>
+  <li>Create tests that always pass (by testing nothing)</li>
+</ul>
+
+<p>Each failure mode was rare — maybe 5% of calls. But with 6 stages, the cumulative failure rate was 26%. That’s a 1 in 4 chance the pipeline would fail on any given run.</p>
+
+<h3 id="the-deterministic-pivot">The Deterministic Pivot</h3>
+
+<p>The fix was to separate concerns. Some operations should never touch an LLM:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// The hybrid approach: LLM for reasoning, code for execution</span>
+<span class="kd">class</span> <span class="nx">RealStageRunner</span> <span class="p">{</span>
+  <span class="k">async</span> <span class="nx">execute</span><span class="p">(</span><span class="nx">stage</span><span class="p">:</span> <span class="nx">StageName</span><span class="p">,</span> <span class="nx">context</span><span class="p">:</span> <span class="nx">SystemState</span><span class="p">):</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">StageResult</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="nx">stage</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="dl">'</span><span class="s1">execute</span><span class="dl">'</span><span class="p">:</span>
+        <span class="c1">// Deterministic: git operations, file writes</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">executeCodeWithGit</span><span class="p">(</span><span class="nx">context</span><span class="p">);</span>
+      <span class="k">case</span> <span class="dl">'</span><span class="s1">validate</span><span class="dl">'</span><span class="p">:</span>
+        <span class="c1">// Deterministic: test runner, coverage checker</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">executeValidationWithTests</span><span class="p">(</span><span class="nx">context</span><span class="p">);</span>
+      <span class="k">case</span> <span class="dl">'</span><span class="s1">slice</span><span class="dl">'</span><span class="p">:</span>
+        <span class="c1">// Hybrid: LLM for reasoning, code for validation</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">executeSliceWithLLM</span><span class="p">(</span><span class="nx">context</span><span class="p">);</span>
+      <span class="nl">default</span><span class="p">:</span>
+        <span class="c1">// Conversational: LLM with human-in-the-loop</span>
+        <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">executeGenericWithLLM</span><span class="p">(</span><span class="nx">context</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The <code class="language-plaintext highlighter-rouge">execute</code> stage is purely deterministic. It takes a HANDOFF specification and:</p>
+
+<ol>
+  <li>Creates a git branch</li>
+  <li>Writes files according to the spec</li>
+  <li>Makes commits with structured messages</li>
+  <li>Reports results</li>
+</ol>
+
+<p>No LLM calls. No hallucinations. If the spec says “create file at src/api/users.ts”, the code creates that exact file.</p>
+
+<h3 id="the-validation-loop">The Validation Loop</h3>
+
+<p>VALIDATE is similarly deterministic. It runs the actual test suite, checks coverage thresholds, and verifies acceptance criteria:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">ValidationExecutor</span> <span class="p">{</span>
+  <span class="k">async</span> <span class="nx">validate</span><span class="p">(</span><span class="nx">handoff</span><span class="p">:</span> <span class="nx">HandoffSpec</span><span class="p">):</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">ValidationResult</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="na">results</span><span class="p">:</span> <span class="nx">ValidationResult</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
+    
+    <span class="k">for</span> <span class="p">(</span><span class="kd">const</span> <span class="nx">criteria</span> <span class="k">of</span> <span class="nx">handoff</span><span class="p">.</span><span class="nx">acceptanceCriteria</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">testResult</span> <span class="o">=</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">runTest</span><span class="p">(</span><span class="nx">criteria</span><span class="p">.</span><span class="nx">testPath</span><span class="p">);</span>
+      <span class="nx">results</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span>
+        <span class="na">criteria</span><span class="p">:</span> <span class="nx">criteria</span><span class="p">.</span><span class="nx">description</span><span class="p">,</span>
+        <span class="na">passed</span><span class="p">:</span> <span class="nx">testResult</span><span class="p">.</span><span class="nx">passed</span><span class="p">,</span>
+        <span class="na">coverage</span><span class="p">:</span> <span class="nx">testResult</span><span class="p">.</span><span class="nx">coverage</span><span class="p">,</span>
+        <span class="na">errors</span><span class="p">:</span> <span class="nx">testResult</span><span class="p">.</span><span class="nx">errors</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
+    
+    <span class="kd">const</span> <span class="nx">overallPassed</span> <span class="o">=</span> <span class="nx">results</span><span class="p">.</span><span class="nx">every</span><span class="p">(</span><span class="nx">r</span> <span class="o">=&gt;</span> <span class="nx">r</span><span class="p">.</span><span class="nx">passed</span><span class="p">);</span>
+    <span class="kd">const</span> <span class="nx">coveragePassed</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">meetsCoverageThreshold</span><span class="p">(</span><span class="nx">results</span><span class="p">);</span>
+    
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="na">passed</span><span class="p">:</span> <span class="nx">overallPassed</span> <span class="o">&amp;&amp;</span> <span class="nx">coveragePassed</span><span class="p">,</span>
+      <span class="nx">results</span><span class="p">,</span>
+      <span class="na">coverage</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">calculateCoverage</span><span class="p">(</span><span class="nx">results</span><span class="p">)</span>
+    <span class="p">};</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>If validation fails, the pipeline stops. No auto-retry. No LLM “fixing” the tests. The system asks for human input because it knows its limits.</p>
+
+<h3 id="the-hybrid-sweet-spot">The Hybrid Sweet Spot</h3>
+
+<p>SLICE and HANDOFF are hybrid stages. They use LLMs for the creative work — decomposing features, writing specifications — but have deterministic validation logic:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">SliceExecutor</span> <span class="p">{</span>
+  <span class="k">async</span> <span class="nx">execute</span><span class="p">(</span><span class="nx">context</span><span class="p">:</span> <span class="nx">SystemState</span><span class="p">):</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">StageResult</span><span class="o">&gt;</span> <span class="p">{</span>
+    <span class="c1">// LLM generates the slices</span>
+    <span class="kd">const</span> <span class="nx">llmResult</span> <span class="o">=</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">llmExecutor</span><span class="p">.</span><span class="nx">execute</span><span class="p">({</span>
+      <span class="na">prompt</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">promptBuilder</span><span class="p">.</span><span class="nx">build</span><span class="p">(</span><span class="dl">'</span><span class="s1">slice</span><span class="dl">'</span><span class="p">,</span> <span class="nx">context</span><span class="p">),</span>
+      <span class="na">schema</span><span class="p">:</span> <span class="nx">sliceSchema</span>  <span class="c1">// Structured output format</span>
+    <span class="p">});</span>
+    
+    <span class="c1">// Deterministic validation</span>
+    <span class="kd">const</span> <span class="nx">validationErrors</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">validateSlices</span><span class="p">(</span><span class="nx">llmResult</span><span class="p">.</span><span class="nx">slices</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">validationErrors</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="p">{</span>
+        <span class="na">status</span><span class="p">:</span> <span class="dl">'</span><span class="s1">needsInput</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">errors</span><span class="p">:</span> <span class="nx">validationErrors</span><span class="p">,</span>
+        <span class="na">suggestedFix</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Please review the slice definitions</span><span class="dl">'</span>
+      <span class="p">};</span>
+    <span class="p">}</span>
+    
+    <span class="k">return</span> <span class="p">{</span> <span class="na">status</span><span class="p">:</span> <span class="dl">'</span><span class="s1">success</span><span class="dl">'</span><span class="p">,</span> <span class="na">slices</span><span class="p">:</span> <span class="nx">llmResult</span><span class="p">.</span><span class="nx">slices</span> <span class="p">};</span>
+  <span class="p">}</span>
+  
+  <span class="k">private</span> <span class="nx">validateSlices</span><span class="p">(</span><span class="nx">slices</span><span class="p">:</span> <span class="nx">Slice</span><span class="p">[]):</span> <span class="nx">ValidationError</span><span class="p">[]</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">errors</span><span class="p">:</span> <span class="nx">ValidationError</span><span class="p">[]</span> <span class="o">=</span> <span class="p">[];</span>
+    
+    <span class="c1">// Check for circular dependencies</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">hasCircularDependencies</span><span class="p">(</span><span class="nx">slices</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nx">errors</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="na">message</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Circular dependency detected</span><span class="dl">'</span> <span class="p">});</span>
+    <span class="p">}</span>
+    
+    <span class="c1">// Check for missing acceptance criteria</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">const</span> <span class="nx">slice</span> <span class="k">of</span> <span class="nx">slices</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">slice</span><span class="p">.</span><span class="nx">acceptanceCriteria</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">errors</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span> <span class="na">message</span><span class="p">:</span> <span class="s2">`Slice </span><span class="p">${</span><span class="nx">slice</span><span class="p">.</span><span class="nx">id</span><span class="p">}</span><span class="s2"> has no acceptance criteria`</span> <span class="p">});</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    
+    <span class="k">return</span> <span class="nx">errors</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="the-costbenefit-analysis">The Cost/Benefit Analysis</h3>
+
+<p>Here’s the real talk: hybrid pipelines are more work to build. You need to write deterministic validation logic, define clear interfaces between LLM and code, and handle edge cases where the LLM produces unexpected output.</p>
+
+<p>But the payoff is massive:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Aspect</th>
+      <th>Pure LLM</th>
+      <th>Hybrid</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Pipeline success rate</td>
+      <td>74%</td>
+      <td>96%</td>
+    </tr>
+    <tr>
+      <td>Debug time per failure</td>
+      <td>15 min</td>
+      <td>2 min</td>
+    </tr>
+    <tr>
+      <td>Test coverage reliability</td>
+      <td>Unpredictable</td>
+      <td>Guaranteed</td>
+    </tr>
+    <tr>
+      <td>Git history quality</td>
+      <td>Messy</td>
+      <td>Clean</td>
+    </tr>
+    <tr>
+      <td>User trust</td>
+      <td>Low</td>
+      <td>High</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The 22% improvement in success rate doesn’t sound dramatic until you realize it means the pipeline fails 4x less often. For a developer using this daily, that’s the difference between a tool they trust and a toy they abandon.</p>
+
+<h3 id="whats-next">What’s Next</h3>
+
+<p>The hybrid model is still evolving. I’m experimenting with:</p>
+<ul>
+  <li>Adaptive stage selection (skip LLM stages when not needed)</li>
+  <li>Confidence scoring (flag low-confidence LLM outputs for review)</li>
+  <li>Incremental validation (validate as you go, not just at the end)</li>
+</ul>
+
+<p>But the core insight holds: <strong>know what your LLM is good at, and don’t ask it to do anything else.</strong></p>
+
+<hr />
+
+<p><em>Next post: State Management in an AI World — Immutable State and Global Blocking</em></p>
+
+        </div>
+
+        <!-- Share -->
+        <div class="share">
+          <h3 class="share__title">Share this post</h3>
+          <div class="share__list">
+            <a href="https://twitter.com/intent/tweet?text=The%20All-LLM%20Trap&url=http://localhost:4000/2026/05/27/the-all-llm-trap/" class="share__link" target="_blank" rel="noopener">
+              <i class="fa-brands fa-x-twitter"></i>
+            </a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url=http://localhost:4000/2026/05/27/the-all-llm-trap/" class="share__link" target="_blank" rel="noopener">
+              <i class="fa-brands fa-linkedin-in"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Post Navigation -->
+        <div class="post__navigation">
+          
+          <div class="post__prev">
+            <div class="prev__box">
+              <span class="post__nav__prev">Previous post</span>
+              <h4 class="post__nav__title">
+                <a href="/2026/05/20/the-solid-refactoring/">The SOLID Refactoring — How I Cut 80% of My Code</a>
+              </h4>
+            </div>
+          </div>
+          
+          
+        </div>
+      </article>
+    </div>
+  </div>
+</div>
+<!-- end post -->
+    </main>
+
+    <!-- begin footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="footer__inner">
+          <div class="row">
+            <div class="col col-4 col-d-12">
+              <div class="footer__info">
+                <h3 class="footer__info__title">It's not just a problem of syntax...</h3>
+                <p class="footer__info__description">Building AI-assisted development tools, one stage at a time</p>
+                <div class="footer__social">
+                  <div class="footer__social__list">
+                    
+                    <div class="footer__social__item">
+                      <a class="footer__social__link" href="https://github.com/silverberdi" target="_blank" rel="noopener">
+                        <i class="fa-brands fa-github"></i>
+                      </a>
+                    </div>
+                    
+                    
+                    
+                    <div class="footer__social__item">
+                      <a class="footer__social__link" href="https://linkedin.com/in/silveriobernal" target="_blank" rel="noopener">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                      </a>
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col col-4 col-d-12">
+              <div class="footer__recent-posts">
+                <h3 class="footer__title">Recent Posts</h3>
+                
+                <div class="footer__recent-content">
+                  <a href="/2026/05/27/the-all-llm-trap/" class="footer__recent-image">
+                    
+                    <img src="/assets/images/the-llm-trap.png" alt="The All-LLM Trap" loading="lazy">
+                    
+                  </a>
+                  <div class="footer__recent-meta">
+                    <h4 class="footer__recent-title">
+                      <a href="/2026/05/27/the-all-llm-trap/">The All-LLM Trap</a>
+                    </h4>
+                    <span class="footer__recent-date">27 MAY 2026</span>
+                  </div>
+                </div>
+                
+                <div class="footer__recent-content">
+                  <a href="/2026/05/20/the-solid-refactoring/" class="footer__recent-image">
+                    
+                    <img src="/assets/images/the-solid-refactoring.png" alt="The SOLID Refactoring — How I Cut 80% of My Code" loading="lazy">
+                    
+                  </a>
+                  <div class="footer__recent-meta">
+                    <h4 class="footer__recent-title">
+                      <a href="/2026/05/20/the-solid-refactoring/">The SOLID Refactoring — How I Cut 80% of My Code</a>
+                    </h4>
+                    <span class="footer__recent-date">20 MAY 2026</span>
+                  </div>
+                </div>
+                
+                <div class="footer__recent-content">
+                  <a href="/2026/05/15/the-pipeline-architecture/" class="footer__recent-image">
+                    
+                    <img src="/assets/images/the-pipeline-architecture.png" alt="The Pipeline Architecture — Why 6 Stages and Not 3 or 10" loading="lazy">
+                    
+                  </a>
+                  <div class="footer__recent-meta">
+                    <h4 class="footer__recent-title">
+                      <a href="/2026/05/15/the-pipeline-architecture/">The Pipeline Architecture — Why 6 Stages and Not 3 or 10</a>
+                    </h4>
+                    <span class="footer__recent-date">15 MAY 2026</span>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+
+            <div class="col col-4 col-d-12">
+              <h3 class="footer__title">Pages</h3>
+              <div class="footer-nav__list">
+                <a class="footer-nav__link" href="/about/">About</a>
+                <a class="footer-nav__link" href="/contact/">Contact</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="copyright">2026 &copy; <a href="/">It's not just a problem of syntax...</a>.</div>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- end footer -->
+  </div>
+
+  <div class="top" title="Top"><i class="fa-solid fa-arrow-up"></i></div>
+
+  <script src="/assets/js/scripts.js"></script>
+  <script src="/assets/js/common.js"></script>
+</body>
+</html>

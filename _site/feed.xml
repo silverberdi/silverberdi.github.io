@@ -1,4 +1,200 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://silverberdi.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://silverberdi.github.io/" rel="alternate" type="text/html" /><updated>2026-05-20T17:48:45-05:00</updated><id>https://silverberdi.github.io/feed.xml</id><title type="html">It’s not just a problem of syntax…</title><subtitle>Building AI-assisted development tools, one stage at a time</subtitle><entry><title type="html">The SOLID Refactoring — How I Cut 80% of My Code</title><link href="https://silverberdi.github.io/2026/05/20/the-solid-refactoring/" rel="alternate" type="text/html" title="The SOLID Refactoring — How I Cut 80% of My Code" /><published>2026-05-20T17:24:00-05:00</published><updated>2026-05-20T17:24:00-05:00</updated><id>https://silverberdi.github.io/2026/05/20/the-solid-refactoring</id><content type="html" xml:base="https://silverberdi.github.io/2026/05/20/the-solid-refactoring/">&lt;h3 id=&quot;the-spaghetti-problem&quot;&gt;The Spaghetti Problem&lt;/h3&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2026-05-27T14:07:55-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">It’s not just a problem of syntax…</title><subtitle>Building AI-assisted development tools, one stage at a time</subtitle><entry><title type="html">The All-LLM Trap</title><link href="http://localhost:4000/2026/05/27/the-all-llm-trap/" rel="alternate" type="text/html" title="The All-LLM Trap" /><published>2026-05-27T00:00:00-05:00</published><updated>2026-05-27T00:00:00-05:00</updated><id>http://localhost:4000/2026/05/27/the-all-llm-trap</id><content type="html" xml:base="http://localhost:4000/2026/05/27/the-all-llm-trap/">&lt;p&gt;In early 2025, there was a trend: build everything with LLMs. Want to write code? LLM. Want to run tests? LLM. Want to deploy? LLM.&lt;/p&gt;
+
+&lt;p&gt;This is seductive because it’s simple. One API call can do anything. But “can do anything” also means “can fail in unpredictable ways.”&lt;/p&gt;
+
+&lt;p&gt;I fell into this trap. My first pipeline was 100% LLM-driven:&lt;/p&gt;
+
+&lt;div class=&quot;language-typescript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// The naive approach: everything goes through the LLM&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;async&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;executeStage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;stage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;string&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;input&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kr&quot;&gt;any&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;prompt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;buildPrompt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;stage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;input&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;response&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;llm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;prompt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;parseResponse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The problem? The LLM would sometimes:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Return malformed JSON&lt;/li&gt;
+  &lt;li&gt;Forget to include required fields&lt;/li&gt;
+  &lt;li&gt;Hallucinate file paths that don’t exist&lt;/li&gt;
+  &lt;li&gt;Generate code with syntax errors&lt;/li&gt;
+  &lt;li&gt;Create tests that always pass (by testing nothing)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Each failure mode was rare — maybe 5% of calls. But with 6 stages, the cumulative failure rate was 26%. That’s a 1 in 4 chance the pipeline would fail on any given run.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-deterministic-pivot&quot;&gt;The Deterministic Pivot&lt;/h3&gt;
+
+&lt;p&gt;The fix was to separate concerns. Some operations should never touch an LLM:&lt;/p&gt;
+
+&lt;div class=&quot;language-typescript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// The hybrid approach: LLM for reasoning, code for execution&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;RealStageRunner&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;async&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;stage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;StageName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;SystemState&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Promise&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;StageResult&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;switch&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;stage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// Deterministic: git operations, file writes&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;executeCodeWithGit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;validate&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// Deterministic: test runner, coverage checker&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;executeValidationWithTests&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;slice&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// Hybrid: LLM for reasoning, code for validation&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;executeSliceWithLLM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;nl&quot;&gt;default&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;c1&quot;&gt;// Conversational: LLM with human-in-the-loop&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;executeGenericWithLLM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;execute&lt;/code&gt; stage is purely deterministic. It takes a HANDOFF specification and:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Creates a git branch&lt;/li&gt;
+  &lt;li&gt;Writes files according to the spec&lt;/li&gt;
+  &lt;li&gt;Makes commits with structured messages&lt;/li&gt;
+  &lt;li&gt;Reports results&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;No LLM calls. No hallucinations. If the spec says “create file at src/api/users.ts”, the code creates that exact file.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-validation-loop&quot;&gt;The Validation Loop&lt;/h3&gt;
+
+&lt;p&gt;VALIDATE is similarly deterministic. It runs the actual test suite, checks coverage thresholds, and verifies acceptance criteria:&lt;/p&gt;
+
+&lt;div class=&quot;language-typescript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ValidationExecutor&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;async&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;validate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;handoff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;HandoffSpec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Promise&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ValidationResult&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;results&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ValidationResult&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[];&lt;/span&gt;
+    
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;criteria&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;handoff&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;acceptanceCriteria&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;testResult&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;runTest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;criteria&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;testPath&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;results&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;criteria&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;criteria&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;passed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;testResult&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;passed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;coverage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;testResult&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;coverage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;errors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;testResult&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;errors&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;overallPassed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;results&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;every&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;r&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;passed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;coveragePassed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;meetsCoverageThreshold&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;results&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;passed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;overallPassed&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;coveragePassed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;results&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;coverage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;calculateCoverage&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;results&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;If validation fails, the pipeline stops. No auto-retry. No LLM “fixing” the tests. The system asks for human input because it knows its limits.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-hybrid-sweet-spot&quot;&gt;The Hybrid Sweet Spot&lt;/h3&gt;
+
+&lt;p&gt;SLICE and HANDOFF are hybrid stages. They use LLMs for the creative work — decomposing features, writing specifications — but have deterministic validation logic:&lt;/p&gt;
+
+&lt;div class=&quot;language-typescript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;SliceExecutor&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;async&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;SystemState&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Promise&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;StageResult&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// LLM generates the slices&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;llmResult&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;llmExecutor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;execute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;prompt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;promptBuilder&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;build&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;slice&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;schema&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;sliceSchema&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// Structured output format&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+    
+    &lt;span class=&quot;c1&quot;&gt;// Deterministic validation&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;validationErrors&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;validateSlices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;llmResult&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;slices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;validationErrors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;length&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;needsInput&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;errors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;validationErrors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;suggestedFix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Please review the slice definitions&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;status&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;success&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;slices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;llmResult&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;slices&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  
+  &lt;span class=&quot;k&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;validateSlices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;slices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Slice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]):&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ValidationError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;errors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ValidationError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[];&lt;/span&gt;
+    
+    &lt;span class=&quot;c1&quot;&gt;// Check for circular dependencies&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;hasCircularDependencies&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;slices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;errors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Circular dependency detected&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    
+    &lt;span class=&quot;c1&quot;&gt;// Check for missing acceptance criteria&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;slice&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;slices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;slice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;acceptanceCriteria&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;length&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;===&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;errors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;`Slice &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;slice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt; has no acceptance criteria`&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;errors&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;the-costbenefit-analysis&quot;&gt;The Cost/Benefit Analysis&lt;/h3&gt;
+
+&lt;p&gt;Here’s the real talk: hybrid pipelines are more work to build. You need to write deterministic validation logic, define clear interfaces between LLM and code, and handle edge cases where the LLM produces unexpected output.&lt;/p&gt;
+
+&lt;p&gt;But the payoff is massive:&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Aspect&lt;/th&gt;
+      &lt;th&gt;Pure LLM&lt;/th&gt;
+      &lt;th&gt;Hybrid&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Pipeline success rate&lt;/td&gt;
+      &lt;td&gt;74%&lt;/td&gt;
+      &lt;td&gt;96%&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Debug time per failure&lt;/td&gt;
+      &lt;td&gt;15 min&lt;/td&gt;
+      &lt;td&gt;2 min&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Test coverage reliability&lt;/td&gt;
+      &lt;td&gt;Unpredictable&lt;/td&gt;
+      &lt;td&gt;Guaranteed&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Git history quality&lt;/td&gt;
+      &lt;td&gt;Messy&lt;/td&gt;
+      &lt;td&gt;Clean&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;User trust&lt;/td&gt;
+      &lt;td&gt;Low&lt;/td&gt;
+      &lt;td&gt;High&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The 22% improvement in success rate doesn’t sound dramatic until you realize it means the pipeline fails 4x less often. For a developer using this daily, that’s the difference between a tool they trust and a toy they abandon.&lt;/p&gt;
+
+&lt;h3 id=&quot;whats-next&quot;&gt;What’s Next&lt;/h3&gt;
+
+&lt;p&gt;The hybrid model is still evolving. I’m experimenting with:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Adaptive stage selection (skip LLM stages when not needed)&lt;/li&gt;
+  &lt;li&gt;Confidence scoring (flag low-confidence LLM outputs for review)&lt;/li&gt;
+  &lt;li&gt;Incremental validation (validate as you go, not just at the end)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;But the core insight holds: &lt;strong&gt;know what your LLM is good at, and don’t ask it to do anything else.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;em&gt;Next post: State Management in an AI World — Immutable State and Global Blocking&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="ai" /><category term="development" /><category term="ai" /><category term="llm" /><category term="pipeline" /><category term="architecture" /><category term="engineering" /><summary type="html">In early 2025, there was a trend: build everything with LLMs. Want to write code? LLM. Want to run tests? LLM. Want to deploy? LLM.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/the-llm-trap.png" /><media:content medium="image" url="http://localhost:4000/assets/images/the-llm-trap.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">The SOLID Refactoring — How I Cut 80% of My Code</title><link href="http://localhost:4000/2026/05/20/the-solid-refactoring/" rel="alternate" type="text/html" title="The SOLID Refactoring — How I Cut 80% of My Code" /><published>2026-05-20T17:24:00-05:00</published><updated>2026-05-20T17:24:00-05:00</updated><id>http://localhost:4000/2026/05/20/the-solid-refactoring</id><content type="html" xml:base="http://localhost:4000/2026/05/20/the-solid-refactoring/">&lt;h3 id=&quot;the-spaghetti-problem&quot;&gt;The Spaghetti Problem&lt;/h3&gt;
 
 &lt;p&gt;Before the refactoring, Dairector had a class called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FlowOrchestrator&lt;/code&gt;. It was 904 lines long. It handled:&lt;/p&gt;
 
@@ -186,7 +382,7 @@
 
 &lt;hr /&gt;
 
-&lt;p&gt;&lt;em&gt;Next post: The Hybrid Pipeline — When to Use LLMs and When to Use Deterministic Code&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="ai" /><category term="development" /><category term="software-architecture" /><category term="refactoring" /><category term="solid" /><category term="typescript" /><category term="dairector" /><summary type="html">The Spaghetti Problem</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://silverberdi.github.io/assets/images/the-solid-refactoring.png" /><media:content medium="image" url="https://silverberdi.github.io/assets/images/the-solid-refactoring.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">The Pipeline Architecture — Why 6 Stages and Not 3 or 10</title><link href="https://silverberdi.github.io/2026/05/15/the-pipeline-architecture/" rel="alternate" type="text/html" title="The Pipeline Architecture — Why 6 Stages and Not 3 or 10" /><published>2026-05-15T14:05:00-05:00</published><updated>2026-05-15T14:05:00-05:00</updated><id>https://silverberdi.github.io/2026/05/15/the-pipeline-architecture</id><content type="html" xml:base="https://silverberdi.github.io/2026/05/15/the-pipeline-architecture/">&lt;h3 id=&quot;the-problem-with-linear-pipelines&quot;&gt;The Problem with Linear Pipelines&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Next post: The Hybrid Pipeline — When to Use LLMs and When to Use Deterministic Code&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="ai" /><category term="development" /><category term="software-architecture" /><category term="refactoring" /><category term="solid" /><category term="typescript" /><category term="dairector" /><summary type="html">The Spaghetti Problem</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/the-solid-refactoring.png" /><media:content medium="image" url="http://localhost:4000/assets/images/the-solid-refactoring.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">The Pipeline Architecture — Why 6 Stages and Not 3 or 10</title><link href="http://localhost:4000/2026/05/15/the-pipeline-architecture/" rel="alternate" type="text/html" title="The Pipeline Architecture — Why 6 Stages and Not 3 or 10" /><published>2026-05-15T14:05:00-05:00</published><updated>2026-05-15T14:05:00-05:00</updated><id>http://localhost:4000/2026/05/15/the-pipeline-architecture</id><content type="html" xml:base="http://localhost:4000/2026/05/15/the-pipeline-architecture/">&lt;h3 id=&quot;the-problem-with-linear-pipelines&quot;&gt;The Problem with Linear Pipelines&lt;/h3&gt;
 
 &lt;p&gt;Most AI coding tools treat code generation as a single-step problem. You give it a prompt, it gives you code. If the code is wrong, you iterate. This works for snippets. It fails for systems.&lt;/p&gt;
 
@@ -288,7 +484,7 @@
 
 &lt;hr /&gt;
 
-&lt;p&gt;&lt;em&gt;Next post: The SOLID Refactoring — How We Cut 80% of Our Code&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="ai" /><category term="development" /><category term="ai-assisted-development" /><category term="llm" /><category term="software-architecture" /><category term="pipeline" /><category term="dairector" /><summary type="html">The Problem with Linear Pipelines</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://silverberdi.github.io/assets/images/the-pipeline-architecture.png" /><media:content medium="image" url="https://silverberdi.github.io/assets/images/the-pipeline-architecture.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">From Idea to Director: How Dairector Was Born</title><link href="https://silverberdi.github.io/2026/05/12/de-la-idea-al-director/" rel="alternate" type="text/html" title="From Idea to Director: How Dairector Was Born" /><published>2026-05-12T05:10:00-05:00</published><updated>2026-05-12T05:10:00-05:00</updated><id>https://silverberdi.github.io/2026/05/12/de-la-idea-al-director</id><content type="html" xml:base="https://silverberdi.github.io/2026/05/12/de-la-idea-al-director/">&lt;h3 id=&quot;chapter-1-the-false-start&quot;&gt;Chapter 1: The False Start&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Next post: The SOLID Refactoring — How We Cut 80% of Our Code&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="ai" /><category term="development" /><category term="ai-assisted-development" /><category term="llm" /><category term="software-architecture" /><category term="pipeline" /><category term="dairector" /><summary type="html">The Problem with Linear Pipelines</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/the-pipeline-architecture.png" /><media:content medium="image" url="http://localhost:4000/assets/images/the-pipeline-architecture.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">From Idea to Director: How Dairector Was Born</title><link href="http://localhost:4000/2026/05/12/de-la-idea-al-director/" rel="alternate" type="text/html" title="From Idea to Director: How Dairector Was Born" /><published>2026-05-12T05:10:00-05:00</published><updated>2026-05-12T05:10:00-05:00</updated><id>http://localhost:4000/2026/05/12/de-la-idea-al-director</id><content type="html" xml:base="http://localhost:4000/2026/05/12/de-la-idea-al-director/">&lt;h3 id=&quot;chapter-1-the-false-start&quot;&gt;Chapter 1: The False Start&lt;/h3&gt;
 
 &lt;p&gt;It started with a simple frustration.&lt;/p&gt;
 
@@ -370,4 +566,4 @@
 
 &lt;hr /&gt;
 
-&lt;p&gt;&lt;em&gt;Next post: The Pipeline Architecture — Why 6 Stages and Not 3 or 10&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="ai" /><category term="development" /><category term="ai-assisted-development" /><category term="llm" /><category term="software-architecture" /><category term="pipeline" /><summary type="html">Chapter 1: The False Start</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://silverberdi.github.io/assets/images/from-idea-to-dairector.png" /><media:content medium="image" url="https://silverberdi.github.io/assets/images/from-idea-to-dairector.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
+&lt;p&gt;&lt;em&gt;Next post: The Pipeline Architecture — Why 6 Stages and Not 3 or 10&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="ai" /><category term="development" /><category term="ai-assisted-development" /><category term="llm" /><category term="software-architecture" /><category term="pipeline" /><summary type="html">Chapter 1: The False Start</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/from-idea-to-dairector.png" /><media:content medium="image" url="http://localhost:4000/assets/images/from-idea-to-dairector.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
