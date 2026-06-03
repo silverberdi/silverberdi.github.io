@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>The Race Condition That Broke Me</title>
+  <meta name="description" content="I was demoing Dairector to a friend. The pipeline was running — IDEA had completed, ANALYZE was generating the design — when I clicked “cancel” because I wan...">
+
+  <link rel="canonical" href="http://localhost:4000/2026/05/31/the-race-condition-that-broke-me/">
+  <link rel="alternate" type="application/rss+xml" title="It's not just a problem of syntax..." href="/feed.xml">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="The Race Condition That Broke Me">
+  <meta name="twitter:description" content="I was demoing Dairector to a friend. The pipeline was running — IDEA had completed, ANALYZE was generating the design — when I clicked “cancel” because I wan...">
+
+  <!-- Facebook OpenGraph -->
+  <meta property="og:title" content="The Race Condition That Broke Me">
+  <meta property="og:description" content="I was demoing Dairector to a friend. The pipeline was running — IDEA had completed, ANALYZE was generating the design — when I clicked “cancel” because I wan...">
+  <meta property="og:url" content="http://localhost:4000/2026/05/31/the-race-condition-that-broke-me/">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+
+  <!-- Dark mode script (runs before render) -->
+  <script>
+    const defaultTheme = "dark";
+    const isToggleEnabled = true;
+    const userTheme = localStorage.getItem("theme");
+
+    function setTheme(mode) {
+      if (mode === "dark") {
+        document.documentElement.setAttribute("dark", "");
+        document.documentElement.classList.add("dark-mode");
+      } else if (mode === "light") {
+        document.documentElement.removeAttribute("dark");
+        document.documentElement.classList.remove("dark-mode");
+      }
+    }
+
+    if (isToggleEnabled) {
+      if (userTheme) {
+        setTheme(userTheme);
+      } else {
+        setTheme(defaultTheme);
+      }
+    }
+  </script>
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body>
+  <div class="global-wrap">
+    <!-- begin header -->
+<header class="header">
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="header__inner">
+          <div class="logo">
+            <a class="logo__link" href="/">
+              It's not just a problem of syntax...
+            </a>
+          </div>
+
+          <nav class="main-nav">
+            <div class="main-nav__box">
+              <ul class="nav__list list-reset">
+                <li class="nav__item">
+                  <a href="/" class="nav__link">Home</a>
+                </li>
+                <li class="nav__item">
+                  <a href="/archive/" class="nav__link">Archive</a>
+                </li>
+                <li class="nav__item">
+                  <a href="/tags/" class="nav__link">Tags</a>
+                </li>
+                <li class="nav__item">
+                  <a href="/about/" class="nav__link">About</a>
+                </li>
+                <li class="nav__item">
+                  <a href="/contact/" class="nav__link">Contact</a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+
+          <div class="nav-button">
+            <div class="color-scheme-button">
+              <div class="toggle-theme">
+                <div class="toggle-moon" title="Enable dark mode" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4">
+                      <path d="M37 32.11C33.94 33.6 24 35.5 18.25 29.75 12.5 24 14.4 14.06 15.89 11 9.5 13.38 5 19.52 5 26.69 5 35.41 12.09 42.5 20.81 42.5 27.98 42.5 34.12 38 36.5 31.61 36.74 31.88 37 32.11 37 32.11Z"/>
+                    </g>
+                  </svg>
+                </div>
+                <div class="toggle-sun" title="Enable light mode" aria-hidden="true">
+                  <svg width="15" height="15" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+                    <g fill="none" stroke="currentColor" stroke-linejoin="round" stroke-width="4">
+                      <path stroke-linecap="round" d="m9.15 9.15l2.228 2.228M3 24h3.15m3 14.85l2.228-2.228M38.85 38.85l-2.228-2.228M45 24h-3.15m-3-14.85l-2.228 2.228M24 3v3.15"/>
+                      <path fill="currentColor" d="M24 36c6.627 0 12-5.373 12-12s-5.373-12-12-12s-12 5.373-12 12s5.373 12 12 12Z"/>
+                      <path stroke-linecap="round" d="M24 45v-3.15"/>
+                    </g>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <div class="search-button">
+              <svg class="search-button__icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M221.09 64a157.09 157.09 0 10157.09 157.09A157.1 157.1 0 00221.09 64z" fill="none" stroke="currentColor" stroke-miterlimit="10" stroke-width="32"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="32" d="M338.29 338.29L448 448"/></svg>
+              <span class="search-button__text">Search posts...</span>
+            </div>
+          </div>
+
+          <div class="hamburger">
+            <div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+<!-- end header -->
+    <!-- begin search -->
+<div class="search">
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="search__box">
+          <div class="search__group">
+            <i class="search__close fa-solid fa-xmark"></i>
+            <label for="js-search-input" class="screen-reader-text">Search for Blog</label>
+            <input type="text" id="js-search-input" class="search__text" autocomplete="off"
+              placeholder="Type to search...">
+          </div>
+          <div class="search-results-list view-list" id="js-results-container"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="search__overlay"></div>
+</div>
+<!-- end search -->
+
+    <main class="content" aria-label="Content">
+      <!-- begin post -->
+<div class="container">
+  <div class="row">
+    <div class="col col-12">
+      <article class="post">
+        <div class="post-head">
+          <div class="post-tags">
+            
+              
+              
+              <span class="post-tag" style="background-color: #9B59B6;">state-management</span>
+              
+              
+              <span class="post-tag" style="background-color: #2ECC71;">immutability</span>
+              
+              
+              <span class="post-tag" style="background-color: #3498DB;">architecture</span>
+              
+              
+              <span class="post-tag" style="background-color: #E74C3C;">race-conditions</span>
+              
+              
+              <span class="post-tag" style="background-color: #E74C3C;">pipeline</span>
+              
+              
+              <span class="post-tag" style="background-color: #1ABC9C;">engineering</span>
+              
+            
+          </div>
+          <h1 class="post-title">The Race Condition That Broke Me</h1>
+          <div class="post-meta">
+            <div class="post-meta__content">
+              <span class="post-meta__author">Silverberdi</span>
+              <div class="post-meta__bottom">
+                <span class="post-meta__date">31 MAY 2026</span>
+                
+                <span class="post-meta__reading-time"> · 6 min read</span>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+
+        
+        <div class="post-image">
+          <img src="/assets/images/race-condition-broke-me.png" alt="The Race Condition That Broke Me" loading="lazy">
+        </div>
+        
+
+        <div class="post__content">
+          <p>I was demoing Dairector to a friend. The pipeline was running — IDEA had completed, ANALYZE was generating the design — when I clicked “cancel” because I wanted to show something else.</p>
+
+<p>The system froze. Not crashed, frozen. The UI showed ANALYZE as “running” and IDEA as “completed” and EXECUTE as “ready” — which should have been impossible since ANALYZE hadn’t finished.</p>
+
+<p>I spent the next 3 hours debugging. The root cause? A race condition in state updates. The cancel event fired while ANALYZE was writing its results. Both events tried to update <code class="language-plaintext highlighter-rouge">SystemState.currentStage</code> simultaneously. The result was a Frankenstein state that made no sense.</p>
+
+<h3 id="the-immutable-solution">The Immutable Solution</h3>
+
+<p>The fix was to make <code class="language-plaintext highlighter-rouge">SystemState</code> immutable. Every update creates a new object:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">SystemState</span> <span class="p">{</span>
+  <span class="k">readonly</span> <span class="nx">currentStage</span><span class="p">:</span> <span class="nx">StageName</span><span class="p">;</span>
+  <span class="k">readonly</span> <span class="nx">stages</span><span class="p">:</span> <span class="nb">Record</span><span class="o">&lt;</span><span class="nx">StageName</span><span class="p">,</span> <span class="nx">StageState</span><span class="o">&gt;</span><span class="p">;</span>
+  <span class="k">readonly</span> <span class="nx">pendingConfirmation</span><span class="p">?:</span> <span class="nx">PendingConfirmation</span><span class="p">;</span>
+  <span class="k">readonly</span> <span class="nx">validationAttempts</span><span class="p">:</span> <span class="kr">number</span><span class="p">;</span>
+  
+  <span class="c1">// Instead of setters, use "with" methods that return new instances</span>
+  <span class="nx">withStageCompleted</span><span class="p">(</span><span class="nx">stage</span><span class="p">:</span> <span class="nx">StageName</span><span class="p">):</span> <span class="nx">SystemState</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">SystemState</span><span class="p">({</span>
+      <span class="p">...</span><span class="k">this</span><span class="p">,</span>
+      <span class="na">stages</span><span class="p">:</span> <span class="p">{</span>
+        <span class="p">...</span><span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">,</span>
+        <span class="p">[</span><span class="nx">stage</span><span class="p">]:</span> <span class="p">{</span> <span class="p">...</span><span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stage</span><span class="p">],</span> <span class="na">status</span><span class="p">:</span> <span class="dl">'</span><span class="s1">completed</span><span class="dl">'</span> <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+  
+  <span class="nx">withPendingConfirmation</span><span class="p">(</span><span class="nx">confirmation</span><span class="p">:</span> <span class="nx">PendingConfirmation</span><span class="p">):</span> <span class="nx">SystemState</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nx">SystemState</span><span class="p">({</span>
+      <span class="p">...</span><span class="k">this</span><span class="p">,</span>
+      <span class="na">pendingConfirmation</span><span class="p">:</span> <span class="nx">confirmation</span><span class="p">,</span>
+      <span class="c1">// Global blocking: no stage can execute</span>
+    <span class="p">});</span>
+  <span class="p">}</span>
+  
+  <span class="nx">canExecuteStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">:</span> <span class="nx">StageName</span><span class="p">):</span> <span class="nx">boolean</span> <span class="p">{</span>
+    <span class="c1">// Global blocking check</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">pendingConfirmation</span><span class="p">)</span> <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    
+    <span class="c1">// Stage-specific checks</span>
+    <span class="kd">const</span> <span class="nx">stageState</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">stages</span><span class="p">[</span><span class="nx">stage</span><span class="p">];</span>
+    <span class="k">return</span> <span class="nx">stageState</span><span class="p">.</span><span class="nx">status</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">ready</span><span class="dl">'</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The key insight: <strong>if you can’t mutate state, you can’t have race conditions</strong>. Every state change is atomic. Every component sees a consistent view.</p>
+
+<h3 id="global-blocking">Global Blocking</h3>
+
+<p>The <code class="language-plaintext highlighter-rouge">pendingConfirmation</code> field is the global lock. When it’s set, the entire pipeline stops:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">FlowOrchestrator</span> <span class="p">{</span>
+  <span class="k">async</span> <span class="nx">executeStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">:</span> <span class="nx">StageName</span><span class="p">,</span> <span class="nx">input</span><span class="p">:</span> <span class="nx">StageInput</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// Check global lock first</span>
+    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">systemState</span><span class="p">.</span><span class="nx">pendingConfirmation</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="p">{</span>
+        <span class="na">status</span><span class="p">:</span> <span class="dl">'</span><span class="s1">blocked</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">reason</span><span class="p">:</span> <span class="s2">`Waiting for confirmation: </span><span class="p">${</span><span class="k">this</span><span class="p">.</span><span class="nx">systemState</span><span class="p">.</span><span class="nx">pendingConfirmation</span><span class="p">.</span><span class="nx">message</span><span class="p">}</span><span class="s2">`</span>
+      <span class="p">};</span>
+    <span class="p">}</span>
+    
+    <span class="c1">// Check stage permissions</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">systemState</span><span class="p">.</span><span class="nx">canExecuteStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="p">{</span>
+        <span class="na">status</span><span class="p">:</span> <span class="dl">'</span><span class="s1">blocked</span><span class="dl">'</span><span class="p">,</span>
+        <span class="na">reason</span><span class="p">:</span> <span class="s2">`Stage </span><span class="p">${</span><span class="nx">stage</span><span class="p">}</span><span class="s2"> cannot execute in current state`</span>
+      <span class="p">};</span>
+    <span class="p">}</span>
+    
+    <span class="c1">// Execute</span>
+    <span class="kd">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">runStage</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="nx">input</span><span class="p">);</span>
+    
+    <span class="c1">// Update state</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">systemState</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">systemState</span><span class="p">.</span><span class="nx">withStageCompleted</span><span class="p">(</span><span class="nx">stage</span><span class="p">);</span>
+    
+    <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This is deliberately simple. No queues, no priority levels, no complex state machines. Just a boolean check that prevents execution when there’s uncertainty.</p>
+
+<h3 id="the-invalidation-cascade">The Invalidation Cascade</h3>
+
+<p>The other critical state pattern is the invalidation cascade. When context changes, downstream stages are marked as <code class="language-plaintext highlighter-rouge">outdated</code>:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">InvalidationApplier</span> <span class="p">{</span>
+  <span class="nx">applyInvalidation</span><span class="p">(</span>
+    <span class="nx">state</span><span class="p">:</span> <span class="nx">SystemState</span><span class="p">,</span>
+    <span class="nx">change</span><span class="p">:</span> <span class="nx">ContextChange</span>
+  <span class="p">):</span> <span class="nx">SystemState</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">affectedStages</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">mapping</span><span class="p">.</span><span class="nx">getAffectedStages</span><span class="p">(</span><span class="nx">change</span><span class="p">);</span>
+    
+    <span class="kd">let</span> <span class="nx">newState</span> <span class="o">=</span> <span class="nx">state</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">const</span> <span class="nx">stage</span> <span class="k">of</span> <span class="nx">affectedStages</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">newState</span> <span class="o">=</span> <span class="nx">newState</span><span class="p">.</span><span class="nx">withStageStatus</span><span class="p">(</span><span class="nx">stage</span><span class="p">,</span> <span class="dl">'</span><span class="s1">outdated</span><span class="dl">'</span><span class="p">);</span>
+    <span class="p">}</span>
+    
+    <span class="k">return</span> <span class="nx">newState</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The mapping defines which stages are affected by which changes:</p>
+
+<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">class</span> <span class="nx">InvalidationMapping</span> <span class="p">{</span>
+  <span class="k">private</span> <span class="k">readonly</span> <span class="nx">dependencies</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="dl">'</span><span class="s1">idea</span><span class="dl">'</span><span class="p">:</span> <span class="p">[],</span>
+    <span class="dl">'</span><span class="s1">analyze</span><span class="dl">'</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">idea</span><span class="dl">'</span><span class="p">],</span>
+    <span class="dl">'</span><span class="s1">slice</span><span class="dl">'</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">idea</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">analyze</span><span class="dl">'</span><span class="p">],</span>
+    <span class="dl">'</span><span class="s1">handoff</span><span class="dl">'</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">idea</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">analyze</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">slice</span><span class="dl">'</span><span class="p">],</span>
+    <span class="dl">'</span><span class="s1">execute</span><span class="dl">'</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">idea</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">analyze</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">slice</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">handoff</span><span class="dl">'</span><span class="p">],</span>
+    <span class="dl">'</span><span class="s1">validate</span><span class="dl">'</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">idea</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">analyze</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">slice</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">handoff</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">execute</span><span class="dl">'</span><span class="p">]</span>
+  <span class="p">};</span>
+  
+  <span class="nx">getAffectedStages</span><span class="p">(</span><span class="nx">change</span><span class="p">:</span> <span class="nx">ContextChange</span><span class="p">):</span> <span class="nx">StageName</span><span class="p">[]</span> <span class="p">{</span>
+    <span class="c1">// Find the stage that changed</span>
+    <span class="kd">const</span> <span class="nx">changedStage</span> <span class="o">=</span> <span class="nx">change</span><span class="p">.</span><span class="nx">affectedStage</span><span class="p">;</span>
+    <span class="c1">// Return all downstream stages</span>
+    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">dependencies</span><span class="p">[</span><span class="nx">changedStage</span><span class="p">]</span> <span class="o">||</span> <span class="p">[];</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>If you change the IDEA context, everything downstream becomes outdated. ANALYZE, SLICE, HANDOFF, EXECUTE, VALIDATE — all need to be re-run. This is aggressive, but it’s safe. Better to redo work than to build on stale foundations.</p>
+
+<h3 id="the-cost-of-immutability">The Cost of Immutability</h3>
+
+<p>Let’s be honest: immutable state has a cost. Creating new objects for every state change means more memory allocation. The <code class="language-plaintext highlighter-rouge">withStageCompleted</code> method creates 3 new objects (the outer state, the stages record, and the individual stage) for a single field change.</p>
+
+<p>In practice, this doesn’t matter. Dairector handles maybe 100 state transitions per pipeline run. The GC handles it fine. But if I were building this for a high-frequency trading system, I’d make different choices.</p>
+
+<p>The tradeoff is worth it. The bug rate from state management dropped to zero after the immutable refactoring. Not “close to zero.” Zero. No race conditions, no phantom states, no “how did we get here?” debugging sessions.</p>
+
+<h3 id="what-id-do-differently">What I’d Do Differently</h3>
+
+<p>I’d add event sourcing on top of the immutable state. Instead of just storing the current state, I’d store the sequence of events that led to it. This would enable:</p>
+<ul>
+  <li>Time travel debugging (“show me the state at step 3”)</li>
+  <li>Rollback to any point (“undo the last ANALYZE run”)</li>
+  <li>Audit trails (“who changed what and when”)</li>
+</ul>
+
+<p>It’s on the roadmap. But even without it, the immutable state model has been one of the best decisions in the project.</p>
+
+<hr />
+
+<p><em>Next post: The Provider Registry — Building a Plugin System for LLMs</em></p>
+
+        </div>
+
+        <!-- Share -->
+        <div class="share">
+          <h3 class="share__title">Share this post</h3>
+          <div class="share__list">
+            <a href="https://twitter.com/intent/tweet?text=The%20Race%20Condition%20That%20Broke%20Me&url=http://localhost:4000/2026/05/31/the-race-condition-that-broke-me/" class="share__link" target="_blank" rel="noopener">
+              <i class="fa-brands fa-x-twitter"></i>
+            </a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url=http://localhost:4000/2026/05/31/the-race-condition-that-broke-me/" class="share__link" target="_blank" rel="noopener">
+              <i class="fa-brands fa-linkedin-in"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Post Navigation -->
+        <div class="post__navigation">
+          
+          <div class="post__prev">
+            <div class="prev__box">
+              <span class="post__nav__prev">Previous post</span>
+              <h4 class="post__nav__title">
+                <a href="/2026/05/27/the-all-llm-trap/">The All-LLM Trap</a>
+              </h4>
+            </div>
+          </div>
+          
+          
+          <div class="post__next">
+            <div class="next__box">
+              <span class="post__nav__next">Next post</span>
+              <h4 class="post__nav__title">
+                <a href="/2026/06/03/the-provider-problem/">The Provider Problem</a>
+              </h4>
+            </div>
+          </div>
+          
+        </div>
+      </article>
+    </div>
+  </div>
+</div>
+<!-- end post -->
+    </main>
+
+    <!-- begin footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="footer__inner">
+          <div class="row">
+            <div class="col col-4 col-d-12">
+              <div class="footer__info">
+                <h3 class="footer__info__title">It's not just a problem of syntax...</h3>
+                <p class="footer__info__description">Building AI-assisted development tools, one stage at a time</p>
+                <div class="footer__social">
+                  <div class="footer__social__list">
+                    
+                    <div class="footer__social__item">
+                      <a class="footer__social__link" href="https://github.com/silverberdi" target="_blank" rel="noopener">
+                        <i class="fa-brands fa-github"></i>
+                      </a>
+                    </div>
+                    
+                    
+                    
+                    <div class="footer__social__item">
+                      <a class="footer__social__link" href="https://linkedin.com/in/silveriobernal" target="_blank" rel="noopener">
+                        <i class="fa-brands fa-linkedin-in"></i>
+                      </a>
+                    </div>
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col col-4 col-d-12">
+              <div class="footer__recent-posts">
+                <h3 class="footer__title">Recent Posts</h3>
+                
+                <div class="footer__recent-content">
+                  <a href="/2026/06/03/the-provider-problem/" class="footer__recent-image">
+                    
+                    <img src="/assets/images/the-provider-problem.png" alt="The Provider Problem" loading="lazy">
+                    
+                  </a>
+                  <div class="footer__recent-meta">
+                    <h4 class="footer__recent-title">
+                      <a href="/2026/06/03/the-provider-problem/">The Provider Problem</a>
+                    </h4>
+                    <span class="footer__recent-date">03 JUN 2026</span>
+                  </div>
+                </div>
+                
+                <div class="footer__recent-content">
+                  <a href="/2026/05/31/the-race-condition-that-broke-me/" class="footer__recent-image">
+                    
+                    <img src="/assets/images/race-condition-broke-me.png" alt="The Race Condition That Broke Me" loading="lazy">
+                    
+                  </a>
+                  <div class="footer__recent-meta">
+                    <h4 class="footer__recent-title">
+                      <a href="/2026/05/31/the-race-condition-that-broke-me/">The Race Condition That Broke Me</a>
+                    </h4>
+                    <span class="footer__recent-date">31 MAY 2026</span>
+                  </div>
+                </div>
+                
+                <div class="footer__recent-content">
+                  <a href="/2026/05/27/the-all-llm-trap/" class="footer__recent-image">
+                    
+                    <img src="/assets/images/the-llm-trap.png" alt="The All-LLM Trap" loading="lazy">
+                    
+                  </a>
+                  <div class="footer__recent-meta">
+                    <h4 class="footer__recent-title">
+                      <a href="/2026/05/27/the-all-llm-trap/">The All-LLM Trap</a>
+                    </h4>
+                    <span class="footer__recent-date">27 MAY 2026</span>
+                  </div>
+                </div>
+                
+              </div>
+            </div>
+
+            <div class="col col-4 col-d-12">
+              <h3 class="footer__title">Pages</h3>
+              <div class="footer-nav__list">
+                <a class="footer-nav__link" href="/about/">About</a>
+                <a class="footer-nav__link" href="/contact/">Contact</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col col-12">
+        <div class="copyright">2026 &copy; <a href="/">It's not just a problem of syntax...</a>.</div>
+      </div>
+    </div>
+  </div>
+</footer>
+<!-- end footer -->
+  </div>
+
+  <div class="top" title="Top"><i class="fa-solid fa-arrow-up"></i></div>
+
+  <script src="/assets/js/scripts.js"></script>
+  <script src="/assets/js/common.js"></script>
+</body>
+</html>

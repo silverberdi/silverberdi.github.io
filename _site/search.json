@@ -1,6 +1,22 @@
 [
   
   {
+    "title": "The Provider Problem",
+    "url": "/2026/06/03/the-provider-problem/",
+    "tags": "dairector, architecture, design-patterns, providers",
+    "date": "03 Jun 2026",
+    "description": "When I started Dairector, I only supported Ollama. It was simple: one provider, one API, one response format. Then I wanted to add OpenAI support. Then Anthropic. Then someone asked about Groq."
+  },
+  
+  {
+    "title": "The Race Condition That Broke Me",
+    "url": "/2026/05/31/the-race-condition-that-broke-me/",
+    "tags": "state-management, immutability, architecture, race-conditions, pipeline, engineering",
+    "date": "31 May 2026",
+    "description": "I was demoing Dairector to a friend. The pipeline was running — IDEA had completed, ANALYZE was generating the design — when I clicked “cancel” because I wanted to show something else."
+  },
+  
+  {
     "title": "The All-LLM Trap",
     "url": "/2026/05/27/the-all-llm-trap/",
     "tags": "ai, llm, pipeline, architecture, engineering",
