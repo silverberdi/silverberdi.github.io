@@ -186,4 +186,4 @@ But the real value isn't in the math. It's in the architecture. The registry mak
 
 ---
 
-*Next post: The ChatBridge — How Natural Language Becomes System Commands*
+*Next post: [The ChatBridge — How Natural Language Becomes System Commands]({% post_url 2026-06-08-the-chatbridge %})*

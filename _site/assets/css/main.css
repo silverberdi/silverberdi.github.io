@@ -1,3 +1,41 @@
+ @import url("https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css");
+ .splide__slide {
+	 height: auto;
+}
+ .splide__slide .article {
+	 height: 100%;
+}
+ .splide__slide .article__inner {
+	 height: 100%;
+	 display: flex;
+	 flex-direction: column;
+}
+ .splide__arrow {
+	 background: var(--background-alt-color) !important;
+	 border-radius: 50% !important;
+	 width: 2.5rem !important;
+	 height: 2.5rem !important;
+	 opacity: 0.9 !important;
+	 transition: opacity 0.2s ease !important;
+}
+ .splide__arrow:hover {
+	 opacity: 1 !important;
+}
+ .splide__arrow svg {
+	 fill: var(--heading-font-color) !important;
+}
+ .splide__pagination__page {
+	 background: var(--border-color) !important;
+}
+ .splide__pagination__page.is-active {
+	 background: var(--primary-color) !important;
+}
+ .latest-posts-carousel {
+	 margin: 0 -12px;
+}
+ .latest-posts-carousel .splide__slide {
+	 padding: 0 12px;
+}
  :root {
 	 --primary-color: #ae00ee;
 	 --secondary-color: #60b0ba;

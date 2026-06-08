@@ -196,6 +196,26 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   // ============================================
+  // Latest Posts Carousel (Splide)
+  // ============================================
+  var latestPostsCarousel = document.querySelector('.latest-posts-carousel');
+  if (latestPostsCarousel && typeof Splide !== 'undefined') {
+    var splide = new Splide('.latest-posts-carousel', {
+      type: 'loop',
+      perPage: 3,
+      perMove: 1,
+      gap: '0px',
+      pagination: true,
+      arrows: true,
+      breakpoints: {
+        1024: { perPage: 2 },
+        768: { perPage: 1 }
+      }
+    });
+    splide.mount();
+  }
+
+  // ============================================
   // Disable animations on resize
   // ============================================
   var disableAnimations;

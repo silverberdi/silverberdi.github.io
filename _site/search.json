@@ -1,6 +1,14 @@
 [
   
   {
+    "title": "The ChatBridge",
+    "url": "/2026/06/08/the-chatbridge/",
+    "tags": "dairector, architecture, design-patterns, chat, nlp",
+    "date": "08 Jun 2026",
+    "description": "The Input Problem"
+  },
+  
+  {
     "title": "The Provider Problem",
     "url": "/2026/06/03/the-provider-problem/",
     "tags": "dairector, architecture, design-patterns, providers",
