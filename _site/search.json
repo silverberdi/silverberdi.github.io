@@ -1,6 +1,14 @@
 [
   
   {
+    "title": "The Service Container",
+    "url": "/2026/06/10/the-service-container/",
+    "tags": "dairector, architecture, design-patterns, typescript, testing, dependency-injection",
+    "date": "10 Jun 2026",
+    "description": "The Import Spaghetti"
+  },
+  
+  {
     "title": "The ChatBridge",
     "url": "/2026/06/08/the-chatbridge/",
     "tags": "dairector, architecture, design-patterns, chat, nlp",
