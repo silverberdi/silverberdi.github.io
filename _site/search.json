@@ -1,6 +1,14 @@
 [
   
   {
+    "title": "Why I Did Not Start With the Database",
+    "url": "/2026/07/06/why-i-did-not-start-with-the-database/",
+    "tags": "software-architecture, domain-driven-design, domain-first-design, system-design, document-management",
+    "date": "06 Jul 2026",
+    "description": "Why I Did Not Start With the Database"
+  },
+  
+  {
     "title": "The Service Container",
     "url": "/2026/06/10/the-service-container/",
     "tags": "dairector, architecture, design-patterns, typescript, testing, dependency-injection",

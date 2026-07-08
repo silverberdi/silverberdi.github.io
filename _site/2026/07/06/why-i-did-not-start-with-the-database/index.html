@@ -5,21 +5,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>From Idea to Director: How Dairector Was Born</title>
-  <meta name="description" content="Chapter 1: The False Start">
+  <title>Why I Did Not Start With the Database</title>
+  <meta name="description" content="Why I Did Not Start With the Database">
 
-  <link rel="canonical" href="https://silverberdi.github.io/2026/05/12/de-la-idea-al-director/">
+  <link rel="canonical" href="https://silverberdi.github.io/2026/07/06/why-i-did-not-start-with-the-database/">
   <link rel="alternate" type="application/rss+xml" title="It's not just a problem of syntax..." href="/feed.xml">
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="From Idea to Director: How Dairector Was Born">
-  <meta name="twitter:description" content="Chapter 1: The False Start">
+  <meta name="twitter:title" content="Why I Did Not Start With the Database">
+  <meta name="twitter:description" content="Why I Did Not Start With the Database">
 
   <!-- Facebook OpenGraph -->
-  <meta property="og:title" content="From Idea to Director: How Dairector Was Born">
-  <meta property="og:description" content="Chapter 1: The False Start">
-  <meta property="og:url" content="https://silverberdi.github.io/2026/05/12/de-la-idea-al-director/">
+  <meta property="og:title" content="Why I Did Not Start With the Database">
+  <meta property="og:description" content="Why I Did Not Start With the Database">
+  <meta property="og:url" content="https://silverberdi.github.io/2026/07/06/why-i-did-not-start-with-the-database/">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -158,25 +158,28 @@
             
               
               
-              <span class="post-tag" style="background-color: #E67E22;">ai-assisted-development</span>
-              
-              
-              <span class="post-tag" style="background-color: #2ECC71;">llm</span>
-              
-              
               <span class="post-tag" style="background-color: #3498DB;">software-architecture</span>
               
               
-              <span class="post-tag" style="background-color: #E74C3C;">pipeline</span>
+              <span class="post-tag" style="background-color: var(--primary-color);">domain-driven-design</span>
+              
+              
+              <span class="post-tag" style="background-color: var(--primary-color);">domain-first-design</span>
+              
+              
+              <span class="post-tag" style="background-color: var(--primary-color);">system-design</span>
+              
+              
+              <span class="post-tag" style="background-color: var(--primary-color);">document-management</span>
               
             
           </div>
-          <h1 class="post-title">From Idea to Director: How Dairector Was Born</h1>
+          <h1 class="post-title">Why I Did Not Start With the Database</h1>
           <div class="post-meta">
             <div class="post-meta__content">
               <span class="post-meta__author">Silverberdi</span>
               <div class="post-meta__bottom">
-                <span class="post-meta__date">12 MAY 2026</span>
+                <span class="post-meta__date">06 JUL 2026</span>
                 
                 <span class="post-meta__reading-time"> · 5 min read</span>
                 
@@ -187,94 +190,186 @@
 
         
         <div class="post-image">
-          <img src="/assets/images/from-idea-to-dairector.png" alt="From Idea to Director: How Dairector Was Born" loading="lazy">
+          <img src="/assets/images/why-i-did-not-start-with-the-database.png" alt="Why I Did Not Start With the Database" loading="lazy">
         </div>
         
 
         <div class="post__content">
-          <h3 id="chapter-1-the-false-start">Chapter 1: The False Start</h3>
+          <h1 id="why-i-did-not-start-with-the-database">Why I Did Not Start With the Database</h1>
 
-<p>It started with a simple frustration.</p>
+<p>There is a common instinct in software projects that looks harmless at the beginning:</p>
 
-<p>I was using Cursor, Copilot, all the usual suspects. And they were great at one thing: generating code snippets. But every time I tried to do something real — build a feature end-to-end, refactor a module, add authentication to an existing system — I hit the same wall.</p>
+<blockquote>
+  <p>“Let’s start with the database.”</p>
+</blockquote>
 
-<p>The AI didn’t know the context. It didn’t understand the architecture. It would generate beautiful code that solved the wrong problem.</p>
+<p>It feels practical. It gives the team something concrete. It creates tables, IDs, relationships, migrations, and a sense of progress.</p>
 
-<p>So I thought: what if I could build a tool that forces the AI to think like a senior developer? To start with the “why” before the “how”? To document decisions, analyze impact, and only then write code?</p>
+<p>But in complex business systems, starting with the database can also be the first architectural mistake.</p>
 
-<p>That was the original vision. Naive, ambitious, and completely wrong about how hard this would be.</p>
+<p>Not because databases are bad. They are not. But because a database is a persistence mechanism, not a substitute for understanding the business model.</p>
 
-<h3 id="the-first-architecture">The First Architecture</h3>
+<p>In a recent architecture exercise around a document-centered, metadata-driven system, I deliberately avoided starting with tables, repositories, or an ORM. I started with the domain.</p>
 
-<p>The first version of Dairector was a single TypeScript file. About 900 lines. It did everything:</p>
+<p>That decision was not academic. It was defensive.</p>
 
-<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// The monolithic approach (v0.1)</span>
-<span class="k">async</span> <span class="kd">function</span> <span class="nx">runPipeline</span><span class="p">(</span><span class="nx">idea</span><span class="p">:</span> <span class="kr">string</span><span class="p">)</span> <span class="p">{</span>
-  <span class="kd">const</span> <span class="nx">design</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">callLLM</span><span class="p">(</span><span class="s2">`Design architecture for: </span><span class="p">${</span><span class="nx">idea</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
-  <span class="kd">const</span> <span class="nx">backlog</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">callLLM</span><span class="p">(</span><span class="s2">`Generate features for: </span><span class="p">${</span><span class="nx">design</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
-  <span class="kd">const</span> <span class="nx">handoff</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">callLLM</span><span class="p">(</span><span class="s2">`Create spec for: </span><span class="p">${</span><span class="nx">backlog</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
-  <span class="kd">const</span> <span class="nx">code</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">callLLM</span><span class="p">(</span><span class="s2">`Write code for: </span><span class="p">${</span><span class="nx">handoff</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
-  <span class="kd">const</span> <span class="nx">tests</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">callLLM</span><span class="p">(</span><span class="s2">`Write tests for: </span><span class="p">${</span><span class="nx">code</span><span class="p">}</span><span class="s2">`</span><span class="p">);</span>
-  <span class="k">return</span> <span class="p">{</span> <span class="nx">design</span><span class="p">,</span> <span class="nx">backlog</span><span class="p">,</span> <span class="nx">handoff</span><span class="p">,</span> <span class="nx">code</span><span class="p">,</span> <span class="nx">tests</span> <span class="p">};</span>
-<span class="p">}</span>
-</code></pre></div></div>
+<h2 id="the-database-is-very-good-at-preserving-decisions">The database is very good at preserving decisions</h2>
 
-<p>It worked. Sort of. The output was… interesting. The AI would generate coherent architectures, write reasonable code, even create tests. But there was no feedback loop. No way to validate. No way to say “that’s not what I meant.”</p>
+<p>A database schema has weight.</p>
 
-<p>And the code was a nightmare. Every change required touching the entire file. Adding a new stage meant rewriting the pipeline. Error handling was an afterthought.</p>
+<p>Once a team creates tables, foreign keys, columns, nullable flags, and indexes, those structures start influencing the way people think about the product. The model becomes harder to question because it already looks “real.”</p>
 
-<h3 id="the-pivot">The Pivot</h3>
+<p>The danger is subtle: the team may confuse the first persistence shape with the actual business model.</p>
 
-<p>After about two months, I had a working prototype and a growing sense of dread. The prototype worked, but it wasn’t extensible. It wasn’t testable. It wasn’t something I could confidently show to other developers.</p>
+<p>For example, in a document management context, the important questions are not initially:</p>
 
-<p>So I made the hardest decision: I deleted almost everything and started over.</p>
-
-<p>The new architecture had one rule: <strong>every stage is independent</strong>. Each stage has its own:</p>
 <ul>
-  <li>Prompt template (loaded from <code class="language-plaintext highlighter-rouge">.md</code> files, not hardcoded)</li>
-  <li>Model configuration (different LLMs for different tasks)</li>
-  <li>State management (immutable, with clear transitions)</li>
-  <li>Error handling (graceful degradation, not crash-and-burn)</li>
+  <li>What tables do we need?</li>
+  <li>What ORM should we use?</li>
+  <li>What are the indexes?</li>
+  <li>What is the repository structure?</li>
 </ul>
 
-<div class="language-typescript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// The modular approach (v0.2)</span>
-<span class="kr">interface</span> <span class="nx">Stage</span> <span class="p">{</span>
-  <span class="nl">name</span><span class="p">:</span> <span class="kr">string</span><span class="p">;</span>
-  <span class="nl">prompt</span><span class="p">:</span> <span class="nx">PromptTemplate</span><span class="p">;</span>
-  <span class="nl">model</span><span class="p">:</span> <span class="nx">ModelConfig</span><span class="p">;</span>
-  <span class="nx">execute</span><span class="p">(</span><span class="nx">input</span><span class="p">:</span> <span class="nx">StageInput</span><span class="p">):</span> <span class="nb">Promise</span><span class="o">&lt;</span><span class="nx">StageResult</span><span class="o">&gt;</span><span class="p">;</span>
-  <span class="nx">validate</span><span class="p">(</span><span class="nx">output</span><span class="p">:</span> <span class="nx">StageOutput</span><span class="p">):</span> <span class="nx">ValidationResult</span><span class="p">;</span>
-<span class="p">}</span>
-</code></pre></div></div>
+<p>The important questions are:</p>
 
-<p>This was the turning point. The code became cleaner, yes. But more importantly, the system started to feel like a real product. Something that could grow.</p>
-
-<h3 id="what-i-learned">What I Learned</h3>
-
-<p>The biggest lesson from those early months: <strong>AI tools fail when they pretend to know everything</strong>. The best AI-assisted development tool isn’t the one that generates the most code — it’s the one that asks the right questions at the right time.</p>
-
-<p>Dairector’s pipeline isn’t just a technical architecture. It’s a philosophy: software development is a conversation. Between you and the code. Between intent and implementation. Between what you want and what the system can do.</p>
-
-<p>The pipeline forces that conversation. IDEA asks “what are we building?” ANALYZE asks “how should we build it?” SLICE asks “what’s the smallest piece we can build first?” HANDOFF documents the plan. EXECUTE writes the code. VALIDATE checks the work.</p>
-
-<p>Each stage is a chance to course-correct. To say “no, that’s not what I meant.” To refine the idea before it becomes a bug.</p>
-
-<h3 id="whats-next">What’s Next</h3>
-
-<p>This is post 1 of 20. Over the next few weeks, I’ll share:</p>
 <ul>
-  <li>The architecture decisions that shaped the project</li>
-  <li>The SOLID refactoring that cut code by 80%</li>
-  <li>The hybrid pipeline that combines LLMs with deterministic execution</li>
-  <li>The testing strategies that caught more bugs than the AI ever wrote</li>
-  <li>The failures, the pivots, and the moments I almost gave up</li>
+  <li>What is a document?</li>
+  <li>When is it complete?</li>
+  <li>What makes a document valid?</li>
+  <li>How does its type evolve over time?</li>
+  <li>What metadata is required?</li>
+  <li>What should be searchable?</li>
+  <li>Who is allowed to discover it?</li>
 </ul>
 
-<p>If you’re building AI-assisted tools, or just curious about what happens when you let an LLM near production code, follow along. This is going to be a wild ride.</p>
+<p>Those are product and domain questions. If we answer them through database structures too early, we risk locking the system into a model we have not understood yet.</p>
 
-<hr />
+<h2 id="tables-can-hide-missing-language">Tables can hide missing language</h2>
 
-<p><em>Next post: The Pipeline Architecture — Why 6 Stages and Not 3 or 10</em></p>
+<p>A table called <code class="language-plaintext highlighter-rouge">Documents</code> can look obvious.</p>
+
+<p>But what is a document?</p>
+
+<p>Is it just a file?
+Is it a business record?
+Can it exist without a file?
+Can it have multiple files?
+Does it have metadata?
+Can metadata change after completion?
+Can a completed document be modified?
+Does the document type define its required metadata?
+Does type version matter?</p>
+
+<p>A table does not answer those questions. It can only store the consequences of the answers.</p>
+
+<p>This is why I prefer to model the domain language first. The model should force the hard questions into the open before infrastructure gives us the illusion that they are solved.</p>
+
+<h2 id="domain-first-is-not-anti-database">Domain-first is not anti-database</h2>
+
+<p>This point matters.</p>
+
+<p>Avoiding the database first does not mean ignoring persistence. It means refusing to let persistence lead the design.</p>
+
+<p>Eventually, the system will need storage. It will need migrations, indexes, query optimization, backup strategies, operational monitoring, and probably a careful persistence model. But those decisions should persist a model that has earned its shape.</p>
+
+<p>In the work I have been doing, the sequence was intentional:</p>
+
+<ol>
+  <li>Model documents and their lifecycle.</li>
+  <li>Model document types and versions.</li>
+  <li>Model metadata and validation rules.</li>
+  <li>Model capture readiness and completion.</li>
+  <li>Model search intent and searchable projections.</li>
+  <li>Delay persistence until the domain boundaries are stable enough.</li>
+</ol>
+
+<p>That sequence gives the database a better job later: preserve a business model instead of inventing one.</p>
+
+<h2 id="the-cost-of-starting-too-low">The cost of starting too low</h2>
+
+<p>When a team starts with tables, several things can happen.</p>
+
+<p>The UI starts mirroring the database.
+The API starts exposing persistence structures.
+The domain becomes a service layer around CRUD.
+Validation spreads across controllers, forms, and stored procedures.
+Business language gets replaced by implementation language.
+The first schema becomes the architecture.</p>
+
+<p>None of this happens because people are careless. It happens because early technical artifacts become magnets. Once they exist, everything else starts orbiting them.</p>
+
+<p>That is why discipline matters at the beginning.</p>
+
+<h2 id="what-i-left-out-on-purpose">What I left out on purpose</h2>
+
+<p>In this architecture, I intentionally left out several things that are usually introduced early:</p>
+
+<ul>
+  <li>EF Core</li>
+  <li>repositories</li>
+  <li>HTTP APIs</li>
+  <li>UI screens</li>
+  <li>runtime search</li>
+  <li>indexing</li>
+  <li>authentication providers</li>
+  <li>authorization plumbing</li>
+</ul>
+
+<p>Not because they are unimportant. They are important. But introducing them before the domain was stable would have created pressure to design around infrastructure.</p>
+
+<p>The goal was to separate business truth from delivery mechanism.</p>
+
+<p>A document can be incomplete or complete regardless of which database stores it.
+A document type can have versions regardless of which ORM maps it.
+Metadata can be required regardless of which UI renders it.
+A search criterion can express intent before a search engine executes it.</p>
+
+<p>That separation is where architectural flexibility begins.</p>
+
+<h2 id="a-practical-rule">A practical rule</h2>
+
+<p>When I am unsure whether to start with infrastructure or domain, I ask this:</p>
+
+<blockquote>
+  <p>If we changed the database tomorrow, would this concept still exist?</p>
+</blockquote>
+
+<p>If the answer is yes, it probably belongs in the domain model first.</p>
+
+<p>A document would still exist.
+A document type would still exist.
+A completion rule would still exist.
+A metadata requirement would still exist.
+A search intent would still exist.
+An authorization decision would still exist.</p>
+
+<p>Those are not database concepts. They are product concepts.</p>
+
+<h2 id="what-this-changes-for-the-team">What this changes for the team</h2>
+
+<p>A domain-first approach changes the conversations.</p>
+
+<p>Instead of asking “What columns do we need?”, the team asks “What must be true for this business operation to be valid?”</p>
+
+<p>Instead of asking “What endpoint should we expose?”, the team asks “What capability are we enabling, and what must be protected?”</p>
+
+<p>Instead of asking “What table stores this?”, the team asks “Which bounded context owns this concept?”</p>
+
+<p>That is a healthier starting point for a complex system.</p>
+
+<h2 id="the-takeaway">The takeaway</h2>
+
+<p>Starting with the database can be fast. But in complex domains, it can also be expensive.</p>
+
+<p>The database should not be the place where the product is discovered. It should be the place where a well-understood model is persisted.</p>
+
+<p>My current bias is simple:</p>
+
+<blockquote>
+  <p>First make the domain honest. Then make it persistent.</p>
+</blockquote>
+
+<p>That one decision can prevent months of accidental coupling later.</p>
 
         </div>
 
@@ -282,10 +377,10 @@
         <div class="share">
           <h3 class="share__title">Share this post</h3>
           <div class="share__list">
-            <a href="https://twitter.com/intent/tweet?text=From%20Idea%20to%20Director:%20How%20Dairector%20Was%20Born&url=https://silverberdi.github.io/2026/05/12/de-la-idea-al-director/" class="share__link" target="_blank" rel="noopener">
+            <a href="https://twitter.com/intent/tweet?text=Why%20I%20Did%20Not%20Start%20With%20the%20Database&url=https://silverberdi.github.io/2026/07/06/why-i-did-not-start-with-the-database/" class="share__link" target="_blank" rel="noopener">
               <i class="fa-brands fa-x-twitter"></i>
             </a>
-            <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://silverberdi.github.io/2026/05/12/de-la-idea-al-director/" class="share__link" target="_blank" rel="noopener">
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url=https://silverberdi.github.io/2026/07/06/why-i-did-not-start-with-the-database/" class="share__link" target="_blank" rel="noopener">
               <i class="fa-brands fa-linkedin-in"></i>
             </a>
           </div>
@@ -294,15 +389,15 @@
         <!-- Post Navigation -->
         <div class="post__navigation">
           
-          
-          <div class="post__next">
-            <div class="next__box">
-              <span class="post__nav__next">Next post</span>
+          <div class="post__prev">
+            <div class="prev__box">
+              <span class="post__nav__prev">Previous post</span>
               <h4 class="post__nav__title">
-                <a href="/2026/05/15/the-pipeline-architecture/">The Pipeline Architecture — Why 6 Stages and Not 3 or 10</a>
+                <a href="/2026/06/10/the-service-container/">The Service Container</a>
               </h4>
             </div>
           </div>
+          
           
         </div>
       </article>

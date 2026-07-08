@@ -1,4 +1,178 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2026-06-17T17:33:44-05:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">It’s not just a problem of syntax…</title><subtitle>Building AI-assisted development tools, one stage at a time</subtitle><entry><title type="html">The Service Container</title><link href="http://localhost:4000/2026/06/10/the-service-container/" rel="alternate" type="text/html" title="The Service Container" /><published>2026-06-10T15:00:00-05:00</published><updated>2026-06-10T15:00:00-05:00</updated><id>http://localhost:4000/2026/06/10/the-service-container</id><content type="html" xml:base="http://localhost:4000/2026/06/10/the-service-container/">&lt;h3 id=&quot;the-import-spaghetti&quot;&gt;The Import Spaghetti&lt;/h3&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator><link href="https://silverberdi.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://silverberdi.github.io/" rel="alternate" type="text/html" /><updated>2026-07-07T19:39:29-05:00</updated><id>https://silverberdi.github.io/feed.xml</id><title type="html">It’s not just a problem of syntax…</title><subtitle>Building AI-assisted development tools, one stage at a time</subtitle><entry><title type="html">Why I Did Not Start With the Database</title><link href="https://silverberdi.github.io/2026/07/06/why-i-did-not-start-with-the-database/" rel="alternate" type="text/html" title="Why I Did Not Start With the Database" /><published>2026-07-06T00:00:00-05:00</published><updated>2026-07-06T00:00:00-05:00</updated><id>https://silverberdi.github.io/2026/07/06/why-i-did-not-start-with-the-database</id><content type="html" xml:base="https://silverberdi.github.io/2026/07/06/why-i-did-not-start-with-the-database/">&lt;h1 id=&quot;why-i-did-not-start-with-the-database&quot;&gt;Why I Did Not Start With the Database&lt;/h1&gt;
+
+&lt;p&gt;There is a common instinct in software projects that looks harmless at the beginning:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;“Let’s start with the database.”&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;It feels practical. It gives the team something concrete. It creates tables, IDs, relationships, migrations, and a sense of progress.&lt;/p&gt;
+
+&lt;p&gt;But in complex business systems, starting with the database can also be the first architectural mistake.&lt;/p&gt;
+
+&lt;p&gt;Not because databases are bad. They are not. But because a database is a persistence mechanism, not a substitute for understanding the business model.&lt;/p&gt;
+
+&lt;p&gt;In a recent architecture exercise around a document-centered, metadata-driven system, I deliberately avoided starting with tables, repositories, or an ORM. I started with the domain.&lt;/p&gt;
+
+&lt;p&gt;That decision was not academic. It was defensive.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-database-is-very-good-at-preserving-decisions&quot;&gt;The database is very good at preserving decisions&lt;/h2&gt;
+
+&lt;p&gt;A database schema has weight.&lt;/p&gt;
+
+&lt;p&gt;Once a team creates tables, foreign keys, columns, nullable flags, and indexes, those structures start influencing the way people think about the product. The model becomes harder to question because it already looks “real.”&lt;/p&gt;
+
+&lt;p&gt;The danger is subtle: the team may confuse the first persistence shape with the actual business model.&lt;/p&gt;
+
+&lt;p&gt;For example, in a document management context, the important questions are not initially:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;What tables do we need?&lt;/li&gt;
+  &lt;li&gt;What ORM should we use?&lt;/li&gt;
+  &lt;li&gt;What are the indexes?&lt;/li&gt;
+  &lt;li&gt;What is the repository structure?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;The important questions are:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;What is a document?&lt;/li&gt;
+  &lt;li&gt;When is it complete?&lt;/li&gt;
+  &lt;li&gt;What makes a document valid?&lt;/li&gt;
+  &lt;li&gt;How does its type evolve over time?&lt;/li&gt;
+  &lt;li&gt;What metadata is required?&lt;/li&gt;
+  &lt;li&gt;What should be searchable?&lt;/li&gt;
+  &lt;li&gt;Who is allowed to discover it?&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Those are product and domain questions. If we answer them through database structures too early, we risk locking the system into a model we have not understood yet.&lt;/p&gt;
+
+&lt;h2 id=&quot;tables-can-hide-missing-language&quot;&gt;Tables can hide missing language&lt;/h2&gt;
+
+&lt;p&gt;A table called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Documents&lt;/code&gt; can look obvious.&lt;/p&gt;
+
+&lt;p&gt;But what is a document?&lt;/p&gt;
+
+&lt;p&gt;Is it just a file?
+Is it a business record?
+Can it exist without a file?
+Can it have multiple files?
+Does it have metadata?
+Can metadata change after completion?
+Can a completed document be modified?
+Does the document type define its required metadata?
+Does type version matter?&lt;/p&gt;
+
+&lt;p&gt;A table does not answer those questions. It can only store the consequences of the answers.&lt;/p&gt;
+
+&lt;p&gt;This is why I prefer to model the domain language first. The model should force the hard questions into the open before infrastructure gives us the illusion that they are solved.&lt;/p&gt;
+
+&lt;h2 id=&quot;domain-first-is-not-anti-database&quot;&gt;Domain-first is not anti-database&lt;/h2&gt;
+
+&lt;p&gt;This point matters.&lt;/p&gt;
+
+&lt;p&gt;Avoiding the database first does not mean ignoring persistence. It means refusing to let persistence lead the design.&lt;/p&gt;
+
+&lt;p&gt;Eventually, the system will need storage. It will need migrations, indexes, query optimization, backup strategies, operational monitoring, and probably a careful persistence model. But those decisions should persist a model that has earned its shape.&lt;/p&gt;
+
+&lt;p&gt;In the work I have been doing, the sequence was intentional:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Model documents and their lifecycle.&lt;/li&gt;
+  &lt;li&gt;Model document types and versions.&lt;/li&gt;
+  &lt;li&gt;Model metadata and validation rules.&lt;/li&gt;
+  &lt;li&gt;Model capture readiness and completion.&lt;/li&gt;
+  &lt;li&gt;Model search intent and searchable projections.&lt;/li&gt;
+  &lt;li&gt;Delay persistence until the domain boundaries are stable enough.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;That sequence gives the database a better job later: preserve a business model instead of inventing one.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-cost-of-starting-too-low&quot;&gt;The cost of starting too low&lt;/h2&gt;
+
+&lt;p&gt;When a team starts with tables, several things can happen.&lt;/p&gt;
+
+&lt;p&gt;The UI starts mirroring the database.
+The API starts exposing persistence structures.
+The domain becomes a service layer around CRUD.
+Validation spreads across controllers, forms, and stored procedures.
+Business language gets replaced by implementation language.
+The first schema becomes the architecture.&lt;/p&gt;
+
+&lt;p&gt;None of this happens because people are careless. It happens because early technical artifacts become magnets. Once they exist, everything else starts orbiting them.&lt;/p&gt;
+
+&lt;p&gt;That is why discipline matters at the beginning.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-i-left-out-on-purpose&quot;&gt;What I left out on purpose&lt;/h2&gt;
+
+&lt;p&gt;In this architecture, I intentionally left out several things that are usually introduced early:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;EF Core&lt;/li&gt;
+  &lt;li&gt;repositories&lt;/li&gt;
+  &lt;li&gt;HTTP APIs&lt;/li&gt;
+  &lt;li&gt;UI screens&lt;/li&gt;
+  &lt;li&gt;runtime search&lt;/li&gt;
+  &lt;li&gt;indexing&lt;/li&gt;
+  &lt;li&gt;authentication providers&lt;/li&gt;
+  &lt;li&gt;authorization plumbing&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Not because they are unimportant. They are important. But introducing them before the domain was stable would have created pressure to design around infrastructure.&lt;/p&gt;
+
+&lt;p&gt;The goal was to separate business truth from delivery mechanism.&lt;/p&gt;
+
+&lt;p&gt;A document can be incomplete or complete regardless of which database stores it.
+A document type can have versions regardless of which ORM maps it.
+Metadata can be required regardless of which UI renders it.
+A search criterion can express intent before a search engine executes it.&lt;/p&gt;
+
+&lt;p&gt;That separation is where architectural flexibility begins.&lt;/p&gt;
+
+&lt;h2 id=&quot;a-practical-rule&quot;&gt;A practical rule&lt;/h2&gt;
+
+&lt;p&gt;When I am unsure whether to start with infrastructure or domain, I ask this:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;If we changed the database tomorrow, would this concept still exist?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;If the answer is yes, it probably belongs in the domain model first.&lt;/p&gt;
+
+&lt;p&gt;A document would still exist.
+A document type would still exist.
+A completion rule would still exist.
+A metadata requirement would still exist.
+A search intent would still exist.
+An authorization decision would still exist.&lt;/p&gt;
+
+&lt;p&gt;Those are not database concepts. They are product concepts.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-this-changes-for-the-team&quot;&gt;What this changes for the team&lt;/h2&gt;
+
+&lt;p&gt;A domain-first approach changes the conversations.&lt;/p&gt;
+
+&lt;p&gt;Instead of asking “What columns do we need?”, the team asks “What must be true for this business operation to be valid?”&lt;/p&gt;
+
+&lt;p&gt;Instead of asking “What endpoint should we expose?”, the team asks “What capability are we enabling, and what must be protected?”&lt;/p&gt;
+
+&lt;p&gt;Instead of asking “What table stores this?”, the team asks “Which bounded context owns this concept?”&lt;/p&gt;
+
+&lt;p&gt;That is a healthier starting point for a complex system.&lt;/p&gt;
+
+&lt;h2 id=&quot;the-takeaway&quot;&gt;The takeaway&lt;/h2&gt;
+
+&lt;p&gt;Starting with the database can be fast. But in complex domains, it can also be expensive.&lt;/p&gt;
+
+&lt;p&gt;The database should not be the place where the product is discovered. It should be the place where a well-understood model is persisted.&lt;/p&gt;
+
+&lt;p&gt;My current bias is simple:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;First make the domain honest. Then make it persistent.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;That one decision can prevent months of accidental coupling later.&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="architecture" /><category term="development" /><category term="software-architecture" /><category term="domain-driven-design" /><category term="domain-first-design" /><category term="system-design" /><category term="document-management" /><summary type="html">Why I Did Not Start With the Database</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://silverberdi.github.io/assets/images/why-i-did-not-start-with-the-database.png" /><media:content medium="image" url="https://silverberdi.github.io/assets/images/why-i-did-not-start-with-the-database.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">The Service Container</title><link href="https://silverberdi.github.io/2026/06/10/the-service-container/" rel="alternate" type="text/html" title="The Service Container" /><published>2026-06-10T15:00:00-05:00</published><updated>2026-06-10T15:00:00-05:00</updated><id>https://silverberdi.github.io/2026/06/10/the-service-container</id><content type="html" xml:base="https://silverberdi.github.io/2026/06/10/the-service-container/">&lt;h3 id=&quot;the-import-spaghetti&quot;&gt;The Import Spaghetti&lt;/h3&gt;
 
 &lt;p&gt;Before the &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ServiceContainer&lt;/code&gt;, Dairector’s classes looked like this:&lt;/p&gt;
 
@@ -148,7 +322,7 @@
 
 &lt;hr /&gt;
 
-&lt;p&gt;&lt;em&gt;Next post: The Invalidation Cascade — How Context Changes Propagate Through the Pipeline&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="architecture" /><category term="dairector" /><category term="dairector" /><category term="architecture" /><category term="design-patterns" /><category term="typescript" /><category term="testing" /><category term="dependency-injection" /><summary type="html">The Import Spaghetti</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/the-service-container.png" /><media:content medium="image" url="http://localhost:4000/assets/images/the-service-container.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">The ChatBridge</title><link href="http://localhost:4000/2026/06/08/the-chatbridge/" rel="alternate" type="text/html" title="The ChatBridge" /><published>2026-06-08T15:00:00-05:00</published><updated>2026-06-08T15:00:00-05:00</updated><id>http://localhost:4000/2026/06/08/the-chatbridge</id><content type="html" xml:base="http://localhost:4000/2026/06/08/the-chatbridge/">&lt;h3 id=&quot;the-input-problem&quot;&gt;The Input Problem&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Next post: The Invalidation Cascade — How Context Changes Propagate Through the Pipeline&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="architecture" /><category term="dairector" /><category term="dairector" /><category term="architecture" /><category term="design-patterns" /><category term="typescript" /><category term="testing" /><category term="dependency-injection" /><summary type="html">The Import Spaghetti</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://silverberdi.github.io/assets/images/the-service-container.png" /><media:content medium="image" url="https://silverberdi.github.io/assets/images/the-service-container.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">The ChatBridge</title><link href="https://silverberdi.github.io/2026/06/08/the-chatbridge/" rel="alternate" type="text/html" title="The ChatBridge" /><published>2026-06-08T15:00:00-05:00</published><updated>2026-06-08T15:00:00-05:00</updated><id>https://silverberdi.github.io/2026/06/08/the-chatbridge</id><content type="html" xml:base="https://silverberdi.github.io/2026/06/08/the-chatbridge/">&lt;h3 id=&quot;the-input-problem&quot;&gt;The Input Problem&lt;/h3&gt;
 
 &lt;p&gt;Every AI tool faces the same question: how does the user communicate with the system?&lt;/p&gt;
 
@@ -285,7 +459,7 @@
 
 &lt;hr /&gt;
 
-&lt;p&gt;&lt;em&gt;Next post: The Service Container — Dependency Injection for AI Tools&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="architecture" /><category term="dairector" /><category term="dairector" /><category term="architecture" /><category term="design-patterns" /><category term="chat" /><category term="nlp" /><summary type="html">The Input Problem</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/the-chat-bridge.png" /><media:content medium="image" url="http://localhost:4000/assets/images/the-chat-bridge.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">The Provider Problem</title><link href="http://localhost:4000/2026/06/03/the-provider-problem/" rel="alternate" type="text/html" title="The Provider Problem" /><published>2026-06-03T10:00:00-05:00</published><updated>2026-06-03T10:00:00-05:00</updated><id>http://localhost:4000/2026/06/03/the-provider-problem</id><content type="html" xml:base="http://localhost:4000/2026/06/03/the-provider-problem/">&lt;p&gt;When I started Dairector, I only supported Ollama. It was simple: one provider, one API, one response format. Then I wanted to add OpenAI support. Then Anthropic. Then someone asked about Groq.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Next post: The Service Container — Dependency Injection for AI Tools&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="architecture" /><category term="dairector" /><category term="dairector" /><category term="architecture" /><category term="design-patterns" /><category term="chat" /><category term="nlp" /><summary type="html">The Input Problem</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://silverberdi.github.io/assets/images/the-chat-bridge.png" /><media:content medium="image" url="https://silverberdi.github.io/assets/images/the-chat-bridge.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">The Provider Problem</title><link href="https://silverberdi.github.io/2026/06/03/the-provider-problem/" rel="alternate" type="text/html" title="The Provider Problem" /><published>2026-06-03T10:00:00-05:00</published><updated>2026-06-03T10:00:00-05:00</updated><id>https://silverberdi.github.io/2026/06/03/the-provider-problem</id><content type="html" xml:base="https://silverberdi.github.io/2026/06/03/the-provider-problem/">&lt;p&gt;When I started Dairector, I only supported Ollama. It was simple: one provider, one API, one response format. Then I wanted to add OpenAI support. Then Anthropic. Then someone asked about Groq.&lt;/p&gt;
 
 &lt;p&gt;Each new provider required:&lt;/p&gt;
 
@@ -461,7 +635,7 @@
 
 &lt;hr /&gt;
 
-&lt;p&gt;&lt;em&gt;Next post: &lt;a href=&quot;/2026/06/08/the-chatbridge/&quot;&gt;The ChatBridge — How Natural Language Becomes System Commands&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="architecture" /><category term="dairector" /><category term="dairector" /><category term="architecture" /><category term="design-patterns" /><category term="providers" /><summary type="html">When I started Dairector, I only supported Ollama. It was simple: one provider, one API, one response format. Then I wanted to add OpenAI support. Then Anthropic. Then someone asked about Groq.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/the-provider-problem.png" /><media:content medium="image" url="http://localhost:4000/assets/images/the-provider-problem.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">The Race Condition That Broke Me</title><link href="http://localhost:4000/2026/05/31/the-race-condition-that-broke-me/" rel="alternate" type="text/html" title="The Race Condition That Broke Me" /><published>2026-05-31T00:00:00-05:00</published><updated>2026-05-31T00:00:00-05:00</updated><id>http://localhost:4000/2026/05/31/the-race-condition-that-broke-me</id><content type="html" xml:base="http://localhost:4000/2026/05/31/the-race-condition-that-broke-me/">&lt;p&gt;I was demoing Dairector to a friend. The pipeline was running — IDEA had completed, ANALYZE was generating the design — when I clicked “cancel” because I wanted to show something else.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Next post: &lt;a href=&quot;/2026/06/08/the-chatbridge/&quot;&gt;The ChatBridge — How Natural Language Becomes System Commands&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="architecture" /><category term="dairector" /><category term="dairector" /><category term="architecture" /><category term="design-patterns" /><category term="providers" /><summary type="html">When I started Dairector, I only supported Ollama. It was simple: one provider, one API, one response format. Then I wanted to add OpenAI support. Then Anthropic. Then someone asked about Groq.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://silverberdi.github.io/assets/images/the-provider-problem.png" /><media:content medium="image" url="https://silverberdi.github.io/assets/images/the-provider-problem.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">The Race Condition That Broke Me</title><link href="https://silverberdi.github.io/2026/05/31/the-race-condition-that-broke-me/" rel="alternate" type="text/html" title="The Race Condition That Broke Me" /><published>2026-05-31T00:00:00-05:00</published><updated>2026-05-31T00:00:00-05:00</updated><id>https://silverberdi.github.io/2026/05/31/the-race-condition-that-broke-me</id><content type="html" xml:base="https://silverberdi.github.io/2026/05/31/the-race-condition-that-broke-me/">&lt;p&gt;I was demoing Dairector to a friend. The pipeline was running — IDEA had completed, ANALYZE was generating the design — when I clicked “cancel” because I wanted to show something else.&lt;/p&gt;
 
 &lt;p&gt;The system froze. Not crashed, frozen. The UI showed ANALYZE as “running” and IDEA as “completed” and EXECUTE as “ready” — which should have been impossible since ANALYZE hadn’t finished.&lt;/p&gt;
 
@@ -609,7 +783,7 @@
 
 &lt;hr /&gt;
 
-&lt;p&gt;&lt;em&gt;Next post: The Provider Registry — Building a Plugin System for LLMs&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="development" /><category term="architecture" /><category term="state-management" /><category term="immutability" /><category term="architecture" /><category term="race-conditions" /><category term="pipeline" /><category term="engineering" /><summary type="html">I was demoing Dairector to a friend. The pipeline was running — IDEA had completed, ANALYZE was generating the design — when I clicked “cancel” because I wanted to show something else.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/race-condition-broke-me.png" /><media:content medium="image" url="http://localhost:4000/assets/images/race-condition-broke-me.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">The All-LLM Trap</title><link href="http://localhost:4000/2026/05/27/the-all-llm-trap/" rel="alternate" type="text/html" title="The All-LLM Trap" /><published>2026-05-27T00:00:00-05:00</published><updated>2026-05-27T00:00:00-05:00</updated><id>http://localhost:4000/2026/05/27/the-all-llm-trap</id><content type="html" xml:base="http://localhost:4000/2026/05/27/the-all-llm-trap/">&lt;p&gt;In early 2025, there was a trend: build everything with LLMs. Want to write code? LLM. Want to run tests? LLM. Want to deploy? LLM.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Next post: The Provider Registry — Building a Plugin System for LLMs&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="development" /><category term="architecture" /><category term="state-management" /><category term="immutability" /><category term="architecture" /><category term="race-conditions" /><category term="pipeline" /><category term="engineering" /><summary type="html">I was demoing Dairector to a friend. The pipeline was running — IDEA had completed, ANALYZE was generating the design — when I clicked “cancel” because I wanted to show something else.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://silverberdi.github.io/assets/images/race-condition-broke-me.png" /><media:content medium="image" url="https://silverberdi.github.io/assets/images/race-condition-broke-me.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">The All-LLM Trap</title><link href="https://silverberdi.github.io/2026/05/27/the-all-llm-trap/" rel="alternate" type="text/html" title="The All-LLM Trap" /><published>2026-05-27T00:00:00-05:00</published><updated>2026-05-27T00:00:00-05:00</updated><id>https://silverberdi.github.io/2026/05/27/the-all-llm-trap</id><content type="html" xml:base="https://silverberdi.github.io/2026/05/27/the-all-llm-trap/">&lt;p&gt;In early 2025, there was a trend: build everything with LLMs. Want to write code? LLM. Want to run tests? LLM. Want to deploy? LLM.&lt;/p&gt;
 
 &lt;p&gt;This is seductive because it’s simple. One API call can do anything. But “can do anything” also means “can fail in unpredictable ways.”&lt;/p&gt;
 
@@ -805,7 +979,7 @@
 
 &lt;hr /&gt;
 
-&lt;p&gt;&lt;em&gt;Next post: State Management in an AI World — Immutable State and Global Blocking&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="ai" /><category term="development" /><category term="ai" /><category term="llm" /><category term="pipeline" /><category term="architecture" /><category term="engineering" /><summary type="html">In early 2025, there was a trend: build everything with LLMs. Want to write code? LLM. Want to run tests? LLM. Want to deploy? LLM.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/the-llm-trap.png" /><media:content medium="image" url="http://localhost:4000/assets/images/the-llm-trap.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">The SOLID Refactoring — How I Cut 80% of My Code</title><link href="http://localhost:4000/2026/05/20/the-solid-refactoring/" rel="alternate" type="text/html" title="The SOLID Refactoring — How I Cut 80% of My Code" /><published>2026-05-20T17:24:00-05:00</published><updated>2026-05-20T17:24:00-05:00</updated><id>http://localhost:4000/2026/05/20/the-solid-refactoring</id><content type="html" xml:base="http://localhost:4000/2026/05/20/the-solid-refactoring/">&lt;h3 id=&quot;the-spaghetti-problem&quot;&gt;The Spaghetti Problem&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Next post: State Management in an AI World — Immutable State and Global Blocking&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="ai" /><category term="development" /><category term="ai" /><category term="llm" /><category term="pipeline" /><category term="architecture" /><category term="engineering" /><summary type="html">In early 2025, there was a trend: build everything with LLMs. Want to write code? LLM. Want to run tests? LLM. Want to deploy? LLM.</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://silverberdi.github.io/assets/images/the-llm-trap.png" /><media:content medium="image" url="https://silverberdi.github.io/assets/images/the-llm-trap.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">The SOLID Refactoring — How I Cut 80% of My Code</title><link href="https://silverberdi.github.io/2026/05/20/the-solid-refactoring/" rel="alternate" type="text/html" title="The SOLID Refactoring — How I Cut 80% of My Code" /><published>2026-05-20T17:24:00-05:00</published><updated>2026-05-20T17:24:00-05:00</updated><id>https://silverberdi.github.io/2026/05/20/the-solid-refactoring</id><content type="html" xml:base="https://silverberdi.github.io/2026/05/20/the-solid-refactoring/">&lt;h3 id=&quot;the-spaghetti-problem&quot;&gt;The Spaghetti Problem&lt;/h3&gt;
 
 &lt;p&gt;Before the refactoring, Dairector had a class called &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FlowOrchestrator&lt;/code&gt;. It was 904 lines long. It handled:&lt;/p&gt;
 
@@ -993,7 +1167,7 @@
 
 &lt;hr /&gt;
 
-&lt;p&gt;&lt;em&gt;Next post: The Hybrid Pipeline — When to Use LLMs and When to Use Deterministic Code&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="ai" /><category term="development" /><category term="software-architecture" /><category term="refactoring" /><category term="solid" /><category term="typescript" /><category term="dairector" /><summary type="html">The Spaghetti Problem</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/the-solid-refactoring.png" /><media:content medium="image" url="http://localhost:4000/assets/images/the-solid-refactoring.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">The Pipeline Architecture — Why 6 Stages and Not 3 or 10</title><link href="http://localhost:4000/2026/05/15/the-pipeline-architecture/" rel="alternate" type="text/html" title="The Pipeline Architecture — Why 6 Stages and Not 3 or 10" /><published>2026-05-15T14:05:00-05:00</published><updated>2026-05-15T14:05:00-05:00</updated><id>http://localhost:4000/2026/05/15/the-pipeline-architecture</id><content type="html" xml:base="http://localhost:4000/2026/05/15/the-pipeline-architecture/">&lt;h3 id=&quot;the-problem-with-linear-pipelines&quot;&gt;The Problem with Linear Pipelines&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Next post: The Hybrid Pipeline — When to Use LLMs and When to Use Deterministic Code&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="ai" /><category term="development" /><category term="software-architecture" /><category term="refactoring" /><category term="solid" /><category term="typescript" /><category term="dairector" /><summary type="html">The Spaghetti Problem</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://silverberdi.github.io/assets/images/the-solid-refactoring.png" /><media:content medium="image" url="https://silverberdi.github.io/assets/images/the-solid-refactoring.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">The Pipeline Architecture — Why 6 Stages and Not 3 or 10</title><link href="https://silverberdi.github.io/2026/05/15/the-pipeline-architecture/" rel="alternate" type="text/html" title="The Pipeline Architecture — Why 6 Stages and Not 3 or 10" /><published>2026-05-15T14:05:00-05:00</published><updated>2026-05-15T14:05:00-05:00</updated><id>https://silverberdi.github.io/2026/05/15/the-pipeline-architecture</id><content type="html" xml:base="https://silverberdi.github.io/2026/05/15/the-pipeline-architecture/">&lt;h3 id=&quot;the-problem-with-linear-pipelines&quot;&gt;The Problem with Linear Pipelines&lt;/h3&gt;
 
 &lt;p&gt;Most AI coding tools treat code generation as a single-step problem. You give it a prompt, it gives you code. If the code is wrong, you iterate. This works for snippets. It fails for systems.&lt;/p&gt;
 
@@ -1095,7 +1269,7 @@
 
 &lt;hr /&gt;
 
-&lt;p&gt;&lt;em&gt;Next post: The SOLID Refactoring — How We Cut 80% of Our Code&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="ai" /><category term="development" /><category term="ai-assisted-development" /><category term="llm" /><category term="software-architecture" /><category term="pipeline" /><category term="dairector" /><summary type="html">The Problem with Linear Pipelines</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/the-pipeline-architecture.png" /><media:content medium="image" url="http://localhost:4000/assets/images/the-pipeline-architecture.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">From Idea to Director: How Dairector Was Born</title><link href="http://localhost:4000/2026/05/12/de-la-idea-al-director/" rel="alternate" type="text/html" title="From Idea to Director: How Dairector Was Born" /><published>2026-05-12T05:10:00-05:00</published><updated>2026-05-12T05:10:00-05:00</updated><id>http://localhost:4000/2026/05/12/de-la-idea-al-director</id><content type="html" xml:base="http://localhost:4000/2026/05/12/de-la-idea-al-director/">&lt;h3 id=&quot;chapter-1-the-false-start&quot;&gt;Chapter 1: The False Start&lt;/h3&gt;
+&lt;p&gt;&lt;em&gt;Next post: The SOLID Refactoring — How We Cut 80% of Our Code&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="ai" /><category term="development" /><category term="ai-assisted-development" /><category term="llm" /><category term="software-architecture" /><category term="pipeline" /><category term="dairector" /><summary type="html">The Problem with Linear Pipelines</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://silverberdi.github.io/assets/images/the-pipeline-architecture.png" /><media:content medium="image" url="https://silverberdi.github.io/assets/images/the-pipeline-architecture.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry><entry><title type="html">From Idea to Director: How Dairector Was Born</title><link href="https://silverberdi.github.io/2026/05/12/de-la-idea-al-director/" rel="alternate" type="text/html" title="From Idea to Director: How Dairector Was Born" /><published>2026-05-12T05:10:00-05:00</published><updated>2026-05-12T05:10:00-05:00</updated><id>https://silverberdi.github.io/2026/05/12/de-la-idea-al-director</id><content type="html" xml:base="https://silverberdi.github.io/2026/05/12/de-la-idea-al-director/">&lt;h3 id=&quot;chapter-1-the-false-start&quot;&gt;Chapter 1: The False Start&lt;/h3&gt;
 
 &lt;p&gt;It started with a simple frustration.&lt;/p&gt;
 
@@ -1177,4 +1351,4 @@
 
 &lt;hr /&gt;
 
-&lt;p&gt;&lt;em&gt;Next post: The Pipeline Architecture — Why 6 Stages and Not 3 or 10&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="ai" /><category term="development" /><category term="ai-assisted-development" /><category term="llm" /><category term="software-architecture" /><category term="pipeline" /><summary type="html">Chapter 1: The False Start</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/assets/images/from-idea-to-dairector.png" /><media:content medium="image" url="http://localhost:4000/assets/images/from-idea-to-dairector.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
+&lt;p&gt;&lt;em&gt;Next post: The Pipeline Architecture — Why 6 Stages and Not 3 or 10&lt;/em&gt;&lt;/p&gt;</content><author><name>Silverberdi</name></author><category term="dairector" /><category term="ai" /><category term="development" /><category term="ai-assisted-development" /><category term="llm" /><category term="software-architecture" /><category term="pipeline" /><summary type="html">Chapter 1: The False Start</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="https://silverberdi.github.io/assets/images/from-idea-to-dairector.png" /><media:content medium="image" url="https://silverberdi.github.io/assets/images/from-idea-to-dairector.png" xmlns:media="http://search.yahoo.com/mrss/" /></entry></feed>
