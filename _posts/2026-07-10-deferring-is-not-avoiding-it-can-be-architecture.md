@@ -4,7 +4,8 @@ audience: Architects, tech leads, managers, C-level, senior developers.
 type: blog-post
 language: en
 layout: post
-date: 2026-07-10 00:00:00 -0500
+date: 2026-07-09 21:08:00 -0500
+permalink: /2026/07/10/deferring-is-not-avoiding-it-can-be-architecture/
 categories:
 - architecture
 - development
